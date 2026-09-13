@@ -3,7 +3,11 @@ import math
 from dataclasses import dataclass
 @dataclass(frozen=True)
 class NetworkFeatures:
-    heartbeat_iat_mean_ms:float; heartbeat_iat_std_ms:float; heartbeat_rtt_p95_ms:float; packet_size_mean_bytes:float; packet_size_std_bytes:float; packet_loss_rate:float; sequence_gap_rate:float; reconnect_rate:float; tcp_reset_count:float; retransmission_rate:float
+    heartbeat_iat_mean_ms:float; heartbeat_iat_std_ms:float; heartbeat_rtt_p95_ms:float; packet_size_mean_bytes:float; packet_size_std_bytes:float; packet_loss_rate:float; sequence_gap_rate:float; reconnect_rate:float=0.0; tcp_reset_count:float=0.0; retransmission_rate:float=0.0
+    @property
+    def valid(self):
+        try: self.vector(); return True
+        except ValueError: return False
     def vector(self):
         values=[float(getattr(self,name)) for name in self.__dataclass_fields__]
         if not all(math.isfinite(x) and x>=0 for x in values): raise ValueError("invalid network features")

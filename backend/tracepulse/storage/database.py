@@ -4,6 +4,9 @@ from contextlib import contextmanager
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterator, Sequence
+
+class DatabaseError(RuntimeError): pass
+
 @dataclass(frozen=True)
 class DatabaseConfig: path:Path; busy_timeout_ms:int=5000
 class Database:

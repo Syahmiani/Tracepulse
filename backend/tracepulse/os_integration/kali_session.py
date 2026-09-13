@@ -1,6 +1,11 @@
 from __future__ import annotations
-import os, pwd, shutil, subprocess, time
+import getpass, os, shutil, subprocess, time
 from dataclasses import dataclass
+
+try:
+    import pwd
+except ImportError:
+    pwd = None
 
 class KaliSessionError(RuntimeError): pass
 @dataclass(frozen=True)
@@ -26,7 +31,7 @@ class KaliSession:
     @staticmethod
     def _bool(value): return str(value).lower() in {"1","yes","true"}
     def inspect(self, session_id=None):
-        current_user=pwd.getpwuid(os.getuid()).pw_name
+        current_user=pwd.getpwuid(os.getuid()).pw_name if pwd is not None else getpass.getuser()
         sid=session_id or os.environ.get("XDG_SESSION_ID")
         if sid is None:
             listed=self._run(["loginctl","list-sessions","--no-legend"])

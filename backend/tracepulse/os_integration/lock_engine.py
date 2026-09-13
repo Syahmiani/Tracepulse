@@ -24,7 +24,7 @@ class LockEngine:
             started=time.monotonic(); info=None; command_succeeded=False; message=""
             try:
                 info=self.session.inspect()
-                result=getattr(self.session,action)(info.session_id); command_succeeded=result.succeeded; message=result.stderr.strip() or result.stdout.strip()
+                result=getattr(self.session,action)(info.session_id); command_succeeded=result.succeeded; message=getattr(result,"stderr","").strip() or getattr(result,"stdout","").strip()
                 confirmed=False
                 if command_succeeded: confirmed=self.session.wait_for_locked(action=="lock",session_id=info.session_id,timeout_seconds=self.timeout).locked_hint is (action=="lock")
                 return LockResult(action,True,confirmed,(time.monotonic()-started)*1000,info.session_id,reason,command_succeeded,message or f"{action} requested",datetime.now(timezone.utc).isoformat())
