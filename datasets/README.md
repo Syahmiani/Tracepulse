@@ -1,0 +1,3 @@
+# TracePulse datasets
+
+Store only real, consented measurements with UTC timestamps, source identifiers, and a manifest containing SHA-256 hashes. Required collections are BLE RSSI, authenticated heartbeat timing, network context, packet metadata, ARP observations, and inter-arrival timing. Synthetic, replayed, manually fabricated, or hardcoded values are rejected by calibration and never become model input.

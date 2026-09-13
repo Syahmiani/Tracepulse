@@ -1,0 +1,50 @@
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
+*.secret
+*.secrets
+*.key
+*.pem
+*.p12
+*.pfx
+
+# Local credentials, certificates, logs, and runtime data
+keys/
+certs/
+logs/
+.config/
+.local/
+*.log
+*.db
+*.sqlite
+*.sqlite3
+
+# Python artifacts
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# JavaScript and Android build artifacts
+node_modules/
+frontend/dist/
+frontend/.vite/
+android/.gradle/
+android/build/
+android/app/build/
+*.apk
+*.aab
+
+# IDE and OS files
+.vscode/settings.json
+.vscode/launch.json
+.idea/
+*.iml
+.DS_Store
+Thumbs.db

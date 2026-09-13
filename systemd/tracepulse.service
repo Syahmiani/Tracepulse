@@ -1,0 +1,20 @@
+[Unit]
+Description=TracePulse proximity security
+After=graphical-session.target network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=%h/tracepulse/backend/.venv/bin/tracepulse
+WorkingDirectory=%h/tracepulse/backend
+EnvironmentFile=-%h/.config/tracepulse/environment
+Restart=on-failure
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=%h/.local/share/tracepulse %h/.config/tracepulse
+PrivateDevices=false
+
+[Install]
+WantedBy=default.target

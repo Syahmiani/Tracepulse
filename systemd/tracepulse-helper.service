@@ -1,0 +1,12 @@
+[Unit]
+Description=TracePulse Helper Service
+After=tracepulse.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 %h/tracepulse/backend/scripts/helper.py
+Restart=no
+User=%i
+
+[Install]
+WantedBy=multi-user.target

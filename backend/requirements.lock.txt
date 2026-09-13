@@ -1,0 +1,2 @@
+python -m pip install pip-tools
+pip-compile --generate-hashes --output-file requirements.lock.txt requirements.in

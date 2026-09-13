@@ -1,0 +1,1 @@
+export default function StatusCard({label,value,detail}){return <article className="panel"><small>{label}</small><strong>{value}</strong>{detail&&<span>{detail}</span>}</article>}

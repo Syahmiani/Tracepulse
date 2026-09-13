@@ -1,0 +1,13 @@
+bind_host = "127.0.0.1"
+port = 8443
+service_url = "https://127.0.0.1:8443/"
+database_path = "~/.local/share/tracepulse/tracepulse.sqlite3"
+tls_cert = "config/tls/server.crt"
+tls_key = "config/tls/server.key"
+ble_service_uuid = ""
+ble_adapter = ""
+heartbeat_timeout_seconds = 2.2
+ble_max_age_seconds = 3.0
+local_admin_only = true
+local_status_only = true
+calibration_mode = false
