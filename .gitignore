@@ -39,6 +39,8 @@ frontend/.vite/
 android/.gradle/
 android/build/
 android/app/build/
+android.backup/
+android.incomplete.20260914_142614/
 *.apk
 *.aab
 
