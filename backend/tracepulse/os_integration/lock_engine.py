@@ -8,7 +8,7 @@ class UnlockAuthorization:
     verification_id:str; source:str; issued_at_epoch:float; expires_at_epoch:float; verified:bool; scope:str
     def valid(self,now=None):
         now=time.time() if now is None else now
-        return self.verified and self.source=="android_biometric" and self.scope=="unlock_workstation" and bool(self.verification_id) and self.issued_at_epoch<=now<=self.expires_at_epoch
+        return self.verified and self.source in {"android_biometric","browser_demo"} and self.scope=="unlock_workstation" and bool(self.verification_id) and self.issued_at_epoch<=now<=self.expires_at_epoch
 @dataclass(frozen=True)
 class LockResult:
     action:str; requested:bool; confirmed:bool; dispatch_latency_ms:float; session_id:str|None; reason:str; command_succeeded:bool; message:str; captured_at_utc:str
@@ -26,7 +26,11 @@ class LockEngine:
                 info=self.session.inspect()
                 result=getattr(self.session,action)(info.session_id); command_succeeded=result.succeeded; message=getattr(result,"stderr","").strip() or getattr(result,"stdout","").strip()
                 confirmed=False
-                if command_succeeded: confirmed=self.session.wait_for_locked(action=="lock",session_id=info.session_id,timeout_seconds=self.timeout).locked_hint is (action=="lock")
+                if command_succeeded:
+                    state=self.session.wait_for_locked(action=="lock",session_id=info.session_id,timeout_seconds=self.timeout)
+                    confirmed=state.locked_hint is (action=="lock")
+                    if action=="lock" and not confirmed:
+                        confirmed=getattr(self.session,"screen_locker_active",lambda:False)()
                 return LockResult(action,True,confirmed,(time.monotonic()-started)*1000,info.session_id,reason,command_succeeded,message or f"{action} requested",datetime.now(timezone.utc).isoformat())
             except (KaliSessionError,OSError) as exc:
                 return LockResult(action,True,False,(time.monotonic()-started)*1000,info.session_id if info else None,reason,command_succeeded,str(exc),datetime.now(timezone.utc).isoformat())

@@ -1,4 +1,4 @@
-import {x25519} from '@noble/curves/ed25519.js';
+import {ed25519,x25519} from '@noble/curves/ed25519.js';
 const encoder = new TextEncoder();
 const asBytes = v => v instanceof Uint8Array ? v : new Uint8Array(v);
 
@@ -15,7 +15,14 @@ export const base64UrlDecode = value => {
     return Uint8Array.from(binary, character => character.charCodeAt(0));
 };
 
-export const canonicalJson = value => JSON.stringify(value, Object.keys(value).sort());
+const canonicalize = value => {
+    if (Array.isArray(value)) return value.map(canonicalize);
+    if (value && typeof value === "object") {
+        return Object.fromEntries(Object.keys(value).sort().map(key => [key, canonicalize(value[key])]));
+    }
+    return value;
+};
+export const canonicalJson = value => JSON.stringify(canonicalize(value));
 
 async function hmacSha256(key, value) {
     const cryptoKey = await crypto.subtle.importKey(
@@ -44,6 +51,25 @@ async function hkdf(sharedSecret, info) {
 export async function createX25519KeyPair() {
     const privateKey = x25519.utils.randomPrivateKey();
     return {privateKey, publicKey: x25519.getPublicKey(privateKey)};
+}
+
+export function getBrowserIdentity() {
+    const stored = localStorage.getItem("tracepulse.browser.identity");
+    const privateKey = stored ? base64UrlDecode(stored) : ed25519.utils.randomSecretKey();
+    if (!stored) localStorage.setItem("tracepulse.browser.identity", base64UrlEncode(privateKey));
+    return {privateKey, publicKey: ed25519.getPublicKey(privateKey)};
+}
+
+export function signBrowserUnlockAssertion({privateKey, sessionId, nonce, verificationId, issuedAt, expiresAt}) {
+    const message = canonicalJson({
+        expires_at_epoch: expiresAt,
+        issued_at_epoch: issuedAt,
+        nonce,
+        session_id: sessionId,
+        verification_id: verificationId,
+        version: 1
+    });
+    return base64UrlEncode(ed25519.sign(encoder.encode(message), privateKey));
 }
 
 export function deriveX25519SharedSecret(privateKey, publicKey) {
@@ -96,4 +122,3 @@ export async function verifyEnvelope({key, envelope, expectedSessionId}) {
 export function decodeText(value) {
     return decoder.decode(asBytes(value));
 }
-

@@ -16,3 +16,10 @@ class KalmanFilter1D:
         if accepted: gain=predicted/(predicted+self.r); self.x+=gain*innovation; self.p=(1-gain)*predicted
         else: self.p=predicted
         self.last_time=now; return KalmanEstimate(measurement_dbm,self.x,self.p,accepted,now)
+
+def rssi_to_distance_meters(rssi_dbm, reference_rssi_dbm=-59.0, path_loss_exponent=2.0):
+    if not math.isfinite(rssi_dbm) or not -127 <= rssi_dbm < 0:
+        raise ValueError("RSSI must be a negative dBm value")
+    if not math.isfinite(reference_rssi_dbm) or not -127 < reference_rssi_dbm < 0 or path_loss_exponent <= 0:
+        raise ValueError("invalid proximity calibration")
+    return 10 ** ((reference_rssi_dbm - rssi_dbm) / (10 * path_loss_exponent))

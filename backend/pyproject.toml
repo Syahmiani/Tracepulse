@@ -2,6 +2,6 @@
 name="tracepulse-backend"
 version="0.3.0"
 requires-python=">=3.11,<3.14"
-dependencies=["Flask>=3,<4","Flask-SocketIO>=5.3,<6","bleak>=0.22,<1","cryptography>=43,<46","numpy>=1.26,<3","psutil>=6,<7","scikit-learn>=1.5,<2","skops>=0.10,<1"]
+dependencies=["Flask>=3,<4","Flask-SocketIO>=5.3,<6","bleak>=0.22,<1","cryptography>=43,<46","numpy>=1.26,<3","psutil>=6,<7","scikit-learn>=1.5,<2","skops>=0.10,<1","qrcode>=8,<9"]
 [project.scripts]
 tracepulse="tracepulse.app:main"

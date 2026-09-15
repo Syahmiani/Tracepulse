@@ -30,6 +30,42 @@ def offer():
     except PermissionError as e:return error(str(e),403)
     except (ValueError,PairingError) as e:return error(str(e),400)
     except RuntimeError:return error("pairing unavailable",503)
+
+@bp.post("/prepare")
+def prepare():
+    try:
+        local_only()
+        value=body() if request.data else {}
+        pairing:PairingManager=ext("tracepulse_pairing")
+        pairing.reset()
+        sessions:SessionManager=ext("tracepulse_sessions")
+        sessions.revoke("pairing reset")
+        sessions.reset()
+        db=ext("tracepulse_db")
+        with db.transaction() as conn:
+            conn.execute("UPDATE sessions SET status='revoked',revoked_reason='pairing reset' WHERE status='active'")
+        result=pairing.create_offer(service_url=current_app.config["TRACEPULSE_SERVICE_URL"],ttl_seconds=float(value.get("ttl_seconds",120)))
+        return jsonify({"handle":result.handle,"qr_payload":result.qr_payload,"expires_at_epoch":result.expires_at_epoch,"server_public_key_b64":result.server_public_key_b64}),201
+    except PermissionError as e:return error(str(e),403)
+    except (ValueError,PairingError) as e:return error(str(e),400)
+    except Exception:
+        current_app.logger.exception("pairing preparation failed")
+        return error("pairing preparation failed",503)
+
+@bp.post("/reset")
+def reset():
+    try:
+        ext("tracepulse_pairing").reset()
+        sessions:SessionManager=ext("tracepulse_sessions")
+        sessions.revoke("pairing reset")
+        sessions.reset()
+        db=ext("tracepulse_db")
+        with db.transaction() as conn:
+            conn.execute("UPDATE sessions SET status='revoked',revoked_reason='pairing reset' WHERE status='active'")
+        return jsonify({"status":"reset"}),200
+    except Exception as exc:
+        current_app.logger.exception("pairing reset failed")
+        return error("pairing reset failed",503)
 @bp.post("/begin")
 def begin():
     try:
@@ -41,6 +77,7 @@ def complete():
         value=body(); handle=string(value.get("handle"),"handle",256); token=string(value.get("token"),"token"); signing=string(value.get("device_signing_public_key_b64"),"device_signing_public_key_b64"); phone=string(value.get("phone_public_key_b64"),"phone_public_key_b64")
         result=ext("tracepulse_pairing").complete(handle=handle,token=token,challenge_b64=string(value.get("challenge_b64"),"challenge_b64"),phone_public_key_b64=phone,device_signing_public_key_b64=signing,client_confirmation_b64=string(value.get("client_confirmation_b64"),"client_confirmation_b64"))
         manager:SessionManager=ext("tracepulse_sessions"); session=manager.establish(shared_secret=result.shared_secret,device_label=string(value.get("device_label"),"device_label",128),device_signing_public_key=__import__("base64").urlsafe_b64decode(signing+"="*(-len(signing)%4)))
+        runtime=ext("tracepulse_runtime"); runtime.phone_ip=request.remote_addr; runtime.phone_model=string(value.get("device_model","unknown"),"device_model",256)
         now=datetime.now(timezone.utc).isoformat(); did=device_id(phone); db=ext("tracepulse_db")
         try:
             with db.transaction() as conn:
@@ -51,3 +88,13 @@ def complete():
         return jsonify({"session_id":session.session_id,"device_id":did,"session_key_salt_b64":b64(session.key_salt),"server_confirmation_b64":result.server_confirmation_b64,"status":"active"}),201
     except (ValueError,PairingError,SessionError) as e:return error(str(e),400)
     except Exception as e: current_app.logger.exception("pairing completion failed"); return error("pairing could not be completed",409)
+
+@bp.post("/approve")
+def approve():
+    try:
+        value=body(); session=ext("tracepulse_sessions").active()
+        requested_id=value.get("session_id")
+        if session is None or (requested_id is not None and session.session_id != string(requested_id,"session_id")): return error("pairing session unavailable",409)
+        ext("tracepulse_sessions").approve(session.session_id)
+        return jsonify({"status":"approved"}),200
+    except (ValueError,SessionError) as e:return error(str(e),409)

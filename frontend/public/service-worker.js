@@ -1,4 +1,4 @@
-const CACHE="tracepulse-shell-v2";
+const CACHE="tracepulse-shell-v4";
 const STATIC=["./","./index.html","./manifest.webmanifest","./icons/icon-192.svg","./icons/icon-512.svg","./icons/maskable-512.svg"];
 const scoped=(p)=>new URL(p,self.registration.scope).toString();
 const same=(u)=>u.origin===self.location.origin;

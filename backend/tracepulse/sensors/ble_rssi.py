@@ -19,12 +19,14 @@ class BleRssiCollector:
         found=await BleakScanner.discover(timeout=timeout_seconds, adapter=self.adapter, return_adv=True)
         now=time.monotonic(); utc=datetime.now(timezone.utc).isoformat(); result=[]
         for _address,(device,adv) in found.items():
-            for uuid,data in (getattr(adv,"service_data",{}) or {}).items():
-                raw=bytes(data); normalized=str(uuid).lower().replace("-","")
-                if normalized!=self.service_uuid or (self.expected and raw.hex()!=self.expected): continue
-                rssi=int(adv.rssi)
-                if not -127<=rssi<0: continue
-                result.append(BleObservation(utc,now,rssi,int(adv.tx_power) if adv.tx_power is not None else None,getattr(device,"name",None),self.service_uuid,raw.hex()))
+            service_data=getattr(adv,"service_data",{}) or {}
+            matching_data=next((bytes(data) for uuid,data in service_data.items() if str(uuid).lower().replace("-","")==self.service_uuid),None)
+            advertised={str(uuid).lower().replace("-","") for uuid in (getattr(adv,"service_uuids",[]) or [])}
+            if matching_data is None and self.service_uuid not in advertised: continue
+            if self.expected and (matching_data is None or matching_data.hex()!=self.expected): continue
+            rssi=int(adv.rssi)
+            if not -127<=rssi<0: continue
+            result.append(BleObservation(utc,now,rssi,int(adv.tx_power) if adv.tx_power is not None else None,getattr(device,"name",None),self.service_uuid,matching_data.hex() if matching_data is not None else ""))
         return result
     async def stream(self, scan_timeout_seconds=2.0, interval_seconds=.1):
         while True:

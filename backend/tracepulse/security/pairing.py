@@ -74,6 +74,10 @@ class PairingManager:
             self._items[handle] = _Transaction(handle, hashlib.sha256(token.encode()).digest(), expires, private)
             return PairingOffer(handle, token, urlunsplit((parsed.scheme, parsed.netloc, parsed.path, parsed.query, fragment)), expires, b64(public))
 
+    def reset(self) -> None:
+        with self._lock:
+            self._items.clear()
+
     def begin(self, *, handle: str, token: str) -> PairingChallenge:
         with self._lock:
             item = self._valid(handle, token)

@@ -14,6 +14,12 @@ def ext(name):
 def error(message, status):
     return jsonify({"error": message}), status
 
+def body():
+    value = request.get_json(silent=True)
+    if not isinstance(value, dict):
+        raise ValueError("JSON object required")
+    return value
+
 @bp.post("/record")
 def record_heartbeat():
     try:

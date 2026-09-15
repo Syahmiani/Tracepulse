@@ -12,6 +12,7 @@
 # Local credentials, certificates, logs, and runtime data
 keys/
 certs/
+config/tls/
 logs/
 .config/
 .local/

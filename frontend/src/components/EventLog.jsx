@@ -1,7 +1,7 @@
 export default function EventLog({events = []}) {
     return (
-        <section className="panel">
-            <h2>Events</h2>
+        <section className="monitor-panel event-panel">
+            <p className="eyebrow">SECURITY STREAM</p><h2>Recent events</h2>
             {events.length === 0 ? (
                 <p className="muted">No events.</p>
             ) : (

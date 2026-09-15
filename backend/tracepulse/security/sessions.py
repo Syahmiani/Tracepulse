@@ -14,6 +14,7 @@ class SessionRecord:
     session_id: str; device_label: str; created_at_epoch: float; last_seen_epoch: float; status: SessionStatus
     key: bytes = field(repr=False); key_salt: bytes = field(repr=False); device_signing_public_key: bytes = field(repr=False)
     outbound_sequence: int = 0
+    approved: bool = False
 
 class SessionError(ValueError): pass
 
@@ -32,7 +33,7 @@ def verify_unlock_assertion(assertion: UnlockAssertion, *, session_id: str, expe
     current=time.time() if now is None else float(now)
     if len(public_key)!=32 or assertion.nonce!=expected_nonce or not (assertion.issued_at_epoch<=current<=assertion.expires_at_epoch) or assertion.expires_at_epoch<assertion.issued_at_epoch or assertion.expires_at_epoch-assertion.issued_at_epoch>30:
         return False
-    signed=canonical_json({"expires_at_epoch":assertion.expires_at_epoch,"issued_at_epoch":assertion.issued_at_epoch,"nonce":assertion.nonce,"session_id":session_id,"verification_id":assertion.verification_id,"version":1})
+    signed=canonical_json({"expires_at_epoch":int(assertion.expires_at_epoch) if assertion.expires_at_epoch.is_integer() else assertion.expires_at_epoch,"issued_at_epoch":int(assertion.issued_at_epoch) if assertion.issued_at_epoch.is_integer() else assertion.issued_at_epoch,"nonce":assertion.nonce,"session_id":session_id,"verification_id":assertion.verification_id,"version":1})
     try:
         padded=assertion.signature_b64+"="*((4-len(assertion.signature_b64)%4)%4)
         Ed25519PublicKey.from_public_bytes(public_key).verify(base64.urlsafe_b64decode(padded),signed)
@@ -62,5 +63,15 @@ class SessionManager:
     def revoke(self, reason="unspecified"):
         with self._lock:
             if self._active: self._active=replace(self._active,status=SessionStatus.REVOKED)
+
+    def reset(self) -> None:
+        with self._lock:
+            self._active = None
+    def approve(self, session_id):
+        with self._lock:
+            self._active = replace(self.require_active(session_id), approved=True)
     def _expire(self):
-        if self._active and self._active.status is SessionStatus.ACTIVE and time.time()-self._active.last_seen_epoch>self.idle_timeout_seconds: self._active=replace(self._active,status=SessionStatus.EXPIRED)
+        if (self._active and self._active.status is SessionStatus.ACTIVE
+                and not self._active.approved
+                and time.time()-self._active.last_seen_epoch>self.idle_timeout_seconds):
+            self._active=replace(self._active,status=SessionStatus.EXPIRED)

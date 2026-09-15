@@ -1,2 +1,121 @@
-import React,{useState} from "react";import {base64UrlDecode,base64UrlEncode,createX25519KeyPair,deriveSessionKey,deriveX25519SharedSecret,makeClientPairingConfirmation,verifyServerPairingConfirmation} from "../security/crypto";
-export default function PairingScreen({onPaired}){const [payload,setPayload]=useState(location.hash.includes("pairing_handle")?location.href:"");const [label,setLabel]=useState("My Android phone");const [error,setError]=useState("");const [busy,setBusy]=useState(false);async function pair(event){event.preventDefault();setBusy(true);setError("");try{const url=new URL(payload.trim());if(url.protocol!=="https:"||url.search)throw Error("HTTPS fragment pairing URL required");const params=new URLSearchParams(url.hash.slice(1));const handle=params.get("pairing_handle"),token=params.get("pairing_token");if(!handle||!token)throw Error("pairing fields missing");const native=window.Capacitor?.Plugins?.TracePulseNative;if(!native?.getIdentityPublicKey)throw Error("native TracePulse plugin required");const identity=await native.getIdentityPublicKey();const begin=await fetch(`${url.origin}/api/pairing/begin`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({handle,token})});if(!begin.ok)throw Error("pairing challenge rejected");const challenge=await begin.json();const pairKeys=await createX25519KeyPair();const shared=deriveX25519SharedSecret(pairKeys.privateKey,base64UrlDecode(challenge.server_public_key_b64));const confirmation=await makeClientPairingConfirmation(shared,base64UrlDecode(challenge.challenge_b64));const complete=await fetch(`${url.origin}/api/pairing/complete`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({handle,token,challenge_b64:challenge.challenge_b64,phone_public_key_b64:base64UrlEncode(pairKeys.publicKey),device_signing_public_key_b64:identity.public_key_b64,client_confirmation_b64:confirmation,device_label:label.trim()})});if(!complete.ok)throw Error("pairing completion rejected");const result=await complete.json();if(!await verifyServerPairingConfirmation(shared,base64UrlDecode(challenge.challenge_b64),result.server_confirmation_b64))throw Error("server confirmation failed");onPaired({origin:url.origin,sessionId:result.session_id,sessionKey:await deriveSessionKey(shared,base64UrlDecode(result.session_key_salt_b64)),deviceId:result.device_id});}catch(e){setError(e.message||"pairing failed");}finally{setBusy(false);}}return <main className="screen centered-screen"><section className="panel"><h1>Pair TracePulse</h1><form className="stack" onSubmit={pair}><label>HTTPS pairing URL<textarea required value={payload} onChange={e=>setPayload(e.target.value)}/></label><label>Device label<input required value={label} onChange={e=>setLabel(e.target.value)}/></label>{error&&<p className="error-text">{error}</p>}<button disabled={busy}>{busy?"PAIRING…":"PAIR SECURELY"}</button></form></section></main>}
+import React,{useEffect,useRef,useState} from "react";
+import QRCode from "qrcode";
+import {base64UrlDecode,base64UrlEncode,createX25519KeyPair,deriveSessionKey,deriveX25519SharedSecret,getBrowserIdentity,makeClientPairingConfirmation,verifyServerPairingConfirmation} from "../security/crypto";
+
+const serviceOrigin=import.meta.env.VITE_SERVICE_URL||`https://${location.hostname}:8443`;
+
+function StartMetric({label,value,icon}){return <div className="start-metric"><span className="start-icon">{icon}</span><span className="start-label">{label}</span><strong>{value}</strong></div>;}
+
+export default function PairingScreen({onPaired,phoneMode=false}){
+    useEffect(()=>{if(phoneMode)localStorage.setItem("tracepulse.role","phone");else localStorage.setItem("tracepulse.role","laptop");},[phoneMode]);
+    const scanned=location.hash.includes("pairing_handle");
+    const [showStart,setShowStart]=useState(scanned);
+    const [payload,setPayload]=useState(scanned?location.href:"");
+    const [qr,setQr]=useState("");
+    const [error,setError]=useState("");
+    const [busy,setBusy]=useState(false);
+    const [phoneConfirmed,setPhoneConfirmed]=useState(false);
+    const [laptopPending,setLaptopPending]=useState(false);
+    const [pendingSession,setPendingSession]=useState(null);
+    const [log,setLog]=useState(["System initialized","Security protocols engaged","Awaiting phone connection..."]);
+    const offerStarted=useRef(false);
+
+    useEffect(()=>{
+        if(scanned||showStart)return;
+        const timer=setTimeout(()=>setShowStart(true),5000);
+        return()=>clearTimeout(timer);
+    },[scanned,showStart]);
+
+    useEffect(()=>{
+        if(phoneMode||payload||!showStart)return;
+        if(offerStarted.current)return;
+        offerStarted.current=true;
+        let cancelled=false;
+        fetch(`${serviceOrigin}/api/pairing/prepare`,{method:"POST",headers:{"Content-Type":"application/json"},body:"{}"})
+            .then(response=>{if(!response.ok)throw Error("pairing offer unavailable");return response.json();})
+            .then(offer=>{
+                const source=new URL(offer.qr_payload);
+                const params=new URLSearchParams(source.hash.slice(1));
+                params.set("service_origin",serviceOrigin);
+                const pairingUrl=`${location.origin}${location.pathname}?role=phone#${params}`;
+                return Promise.all([pairingUrl,QRCode.toDataURL(pairingUrl,{margin:2,width:300})]);
+            })
+            .then(([value,image])=>{if(!cancelled){setPayload(value);setQr(image);setLog(items=>[...items,"Secure pairing QR generated"]);}})
+            .catch(exception=>{if(!cancelled)setError(exception.message||"pairing offer unavailable");});
+        return ()=>{cancelled=true;};
+    },[payload,showStart,phoneMode]);
+
+    useEffect(()=>{
+        if(scanned)return;
+        let stopped=false;
+        const check=async()=>{
+            try{
+                const response=await fetch(`${serviceOrigin}/api/status`,{cache:"no-store"});
+                if(!response.ok)return;
+                const status=await response.json();
+                if(!stopped&&status.session?.active&&!status.session?.approved)setLaptopPending(true);
+            }catch(exception){if(!stopped)setError(exception.message||"monitor status unavailable");}
+        };
+        const id=setInterval(check,1000);
+        return()=>{stopped=true;clearInterval(id);};
+    },[scanned,onPaired]);
+
+    useEffect(()=>{
+        if(!pendingSession)return undefined;
+        let stopped=false;
+        const check=async()=>{
+            try{
+                const response=await fetch(`${pendingSession.origin}/api/status`,{cache:"no-store"});
+                const status=await response.json();
+                if(!stopped&&status.session?.approved)onPaired(pendingSession);
+            }catch(exception){if(!stopped)setError(exception.message||"pairing approval unavailable");}
+        };
+        const id=setInterval(check,500);
+        check();
+        return()=>{stopped=true;clearInterval(id);};
+    },[pendingSession,onPaired]);
+
+    async function pair(){
+        setBusy(true);setError("");setLog(items=>[...items,"Phone QR scanned","Establishing encrypted link..."]);
+        try{
+            const url=new URL(payload.trim());
+            const params=new URLSearchParams(url.hash.slice(1));
+            const handle=params.get("pairing_handle"),token=params.get("pairing_token");
+            if(!handle||!token)throw Error("pairing fields missing");
+            const apiOrigin=params.get("service_origin")||serviceOrigin;
+            const native=window.Capacitor?.Plugins?.TracePulseNative;
+            const browserIdentity=getBrowserIdentity();
+            const identity=native?.getIdentityPublicKey?await native.getIdentityPublicKey():{public_key_b64:base64UrlEncode(browserIdentity.publicKey)};
+            const deviceInfo=native?.getDeviceInfo?await native.getDeviceInfo():{model:navigator.userAgent};
+            const begin=await fetch(`${apiOrigin}/api/pairing/begin`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({handle,token})});
+            if(!begin.ok){let detail="pairing challenge rejected";try{const body=await begin.json();if(body.error)detail=`pairing challenge rejected: ${body.error}`;}catch{}throw Error(detail);}
+            const challenge=await begin.json();
+            const pairKeys=await createX25519KeyPair();
+            const shared=deriveX25519SharedSecret(pairKeys.privateKey,base64UrlDecode(challenge.server_public_key_b64));
+            const confirmation=await makeClientPairingConfirmation(shared,base64UrlDecode(challenge.challenge_b64));
+            const complete=await fetch(`${apiOrigin}/api/pairing/complete`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({handle,token,challenge_b64:challenge.challenge_b64,phone_public_key_b64:base64UrlEncode(pairKeys.publicKey),device_signing_public_key_b64:identity.public_key_b64,client_confirmation_b64:confirmation,device_label:deviceInfo.model||"TracePulse phone",device_model:deviceInfo.model||"unknown"})});
+            if(!complete.ok)throw Error("pairing completion rejected");
+            const result=await complete.json();
+            if(!await verifyServerPairingConfirmation(shared,base64UrlDecode(challenge.challenge_b64),result.server_confirmation_b64))throw Error("server confirmation failed");
+            setLog(items=>[...items,"Secure link established","Phone executor ready"]);
+            setPendingSession({origin:apiOrigin,sessionId:result.session_id,sessionKey:await deriveSessionKey(shared,base64UrlDecode(result.session_key_salt_b64)),deviceId:result.device_id,identity:browserIdentity});
+        }catch(exception){setError(exception.message||"pairing failed");setBusy(false);}
+    }
+
+    const acceptOnLaptop=async()=>{
+        setBusy(true);
+        try{
+            const response=await fetch(`${serviceOrigin}/api/pairing/approve`,{method:"POST",headers:{"Content-Type":"application/json"},body:"{}"});
+            if(!response.ok)throw Error("laptop approval failed");
+            onPaired({origin:serviceOrigin,dashboardOnly:true});
+        }catch(exception){setError(exception.message||"laptop approval failed");setBusy(false);}
+    };
+
+    if(!showStart)return <main className="tracepulse-splash"><div className="tracepulse-wordmark">TRACEPULSE</div></main>;
+    if(scanned)return <main className="start-shell phone-pair-shell"><section className="start-panel pair-progress"><p className="start-eyebrow">TRACEPULSE // SECURE LINK</p><h1>PAIR WITH THIS LAPTOP?</h1><p>Confirm to establish the encrypted TracePulse phone executor link.</p>{!phoneConfirmed?<button className="pair-confirm-button" disabled={busy} onClick={()=>{setPhoneConfirmed(true);pair();}}>{busy?"PAIRING…":"ACCEPT PAIRING"}</button>:<><div className="scan-pulse">◉</div><p>Phone accepted. Waiting for laptop confirmation before opening the dashboard.</p></>}{error&&<p className="start-error">{error}</p>}</section></main>;
+    if(laptopPending)return <main className="start-shell phone-pair-shell"><section className="start-panel pair-progress"><p className="start-eyebrow">TRACEPULSE // LAPTOP APPROVAL</p><h1>PHONE PAIRING REQUEST</h1><p>A phone has accepted the QR pairing request. Confirm this trusted device on the laptop.</p><button className="pair-confirm-button" disabled={busy} onClick={acceptOnLaptop}>{busy?"APPROVING…":"ACCEPT PAIRING"}</button></section></main>;
+    if(phoneMode)return <main className="start-shell phone-pair-shell"><section className="start-panel pair-progress"><p className="start-eyebrow">TRACEPULSE // PHONE EXECUTOR</p><h1>READY TO SCAN</h1><p>TracePulse was unpaired. Scan the new QR code displayed on the laptop to pair again.</p><div className="scan-pulse">◉</div></section></main>;
+    return <main className="start-shell">
+        <section className="qr-only-screen"><p className="start-eyebrow">TRACEPULSE // SECURE PAIRING</p><h1>SCAN TO CONNECT</h1>{qr?<img className="start-qr" src={qr} alt="TracePulse phone pairing QR code"/>:<div className="qr-placeholder">GENERATING QR</div>}<p>Scan this QR code with the phone camera.</p><span className="qr-badge">ONE-TIME ENCRYPTED LINK</span>{error&&<p className="start-error">{error}</p>}</section>
+    </main>;
+}

@@ -32,6 +32,7 @@ class KaliSession:
     def _bool(value): return str(value).lower() in {"1","yes","true"}
     def inspect(self, session_id=None):
         current_user=pwd.getpwuid(os.getuid()).pw_name if pwd is not None else getpass.getuser()
+        current_uid=str(os.getuid())
         sid=session_id or os.environ.get("XDG_SESSION_ID")
         if sid is None:
             listed=self._run(["loginctl","list-sessions","--no-legend"])
@@ -39,26 +40,52 @@ class KaliSession:
             candidates=[]
             for line in listed.stdout.splitlines():
                 fields=line.split()
-                if len(fields)>=2 and fields[1]==current_user:
+                if len(fields)>=2 and fields[1] in {current_user,current_uid}:
                     try: candidates.append(self._build(self._properties(fields[0])))
                     except KaliSessionError: pass
             candidates=[x for x in candidates if x.active and not x.remote and x.graphical]
             if not candidates: raise KaliSessionError("no active local graphical session")
             return candidates[0]
         info=self._build(self._properties(sid))
-        if info.user!=current_user or info.remote or not info.graphical: raise KaliSessionError("session is not the current local graphical session")
+        if info.user not in {current_user,current_uid} or info.remote or not info.graphical: raise KaliSessionError("session is not the current local graphical session")
         return info
     def _build(self,p):
         if not p.get("Id") or not p.get("User"): raise KaliSessionError("session did not expose Id/User")
         return KaliSessionInfo(p["Id"],p["User"],p.get("Type", ""),p.get("Class", ""),p.get("State", ""),self._bool(p.get("Active")),self._bool(p.get("Remote")),self._bool(p["LockedHint"]) if "LockedHint" in p else None)
-    def lock(self, session_id=None):
-        info=self.inspect(session_id); return self._run(["loginctl","lock-session",info.session_id])
     def unlock(self, session_id=None):
-        info=self.inspect(session_id); return self._run(["loginctl","unlock-session",info.session_id])
+        info=self.inspect(session_id)
+        result=self._run(["loginctl","unlock-session",info.session_id])
+        if result.succeeded and self._xfce_screensaver_active() and shutil.which("xfce4-screensaver-command"):
+            fallback=self._run(["xfce4-screensaver-command","--deactivate"])
+            if fallback.succeeded:
+                return fallback
+        return result
     def wait_for_locked(self, expected, *, session_id=None, timeout_seconds=.8, poll_seconds=.05):
         deadline=time.monotonic()+timeout_seconds; last=None
         while time.monotonic()<=deadline:
             last=self.inspect(session_id)
             if last.locked_hint is expected: return last
+            if expected and self.screen_locker_active():
+                return last
+            if not expected and not self.screen_locker_active():
+                return last
             time.sleep(poll_seconds)
         raise KaliSessionError(f"OS did not confirm LockedHint={expected}; last={last}")
+
+    def lock(self, session_id=None):
+        info=self.inspect(session_id)
+        result=self._run(["loginctl","lock-session",info.session_id])
+        if result.succeeded and info.locked_hint is not True and shutil.which("xfce4-screensaver-command"):
+            fallback=self._run(["xfce4-screensaver-command","--lock"])
+            if fallback.succeeded:
+                return fallback
+        return result
+
+    def _xfce_screensaver_active(self):
+        if shutil.which("xfce4-screensaver-command") is None:
+            return False
+        result=self._run(["xfce4-screensaver-command","--query"])
+        return result.succeeded and "screensaver is active" in result.stdout.lower()
+
+    def screen_locker_active(self):
+        return self._xfce_screensaver_active()
