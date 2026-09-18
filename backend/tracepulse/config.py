@@ -30,6 +30,10 @@ class Config:
     local_status_only: bool = True
     calibration_mode: bool = False
     testing: bool = False
+    dynamic_perimeter_max_expansion_meters: float = 3.0
+    dynamic_perimeter_stability_covariance: float = 6.0
+    trusted_bssids: tuple[str, ...] = ()
+    network_guard_check_interval_seconds: float = 5.0
 
     @classmethod
     def from_env(cls, testing: bool = False) -> "Config":
@@ -53,6 +57,10 @@ class Config:
             local_status_only=_env_bool("TRACEPULSE_LOCAL_STATUS_ONLY", cls.local_status_only),
             calibration_mode=_env_bool("TRACEPULSE_CALIBRATION_MODE", cls.calibration_mode),
             testing=testing,
+            dynamic_perimeter_max_expansion_meters=float(os.getenv("TRACEPULSE_PERIMETER_MAX_EXPANSION_METERS", cls.dynamic_perimeter_max_expansion_meters)),
+            dynamic_perimeter_stability_covariance=float(os.getenv("TRACEPULSE_PERIMETER_STABILITY_COVARIANCE", cls.dynamic_perimeter_stability_covariance)),
+            trusted_bssids=tuple(x.strip() for x in os.getenv("TRACEPULSE_TRUSTED_BSSIDS", "").split(",") if x.strip()),
+            network_guard_check_interval_seconds=float(os.getenv("TRACEPULSE_NETWORK_GUARD_INTERVAL_SECONDS", cls.network_guard_check_interval_seconds)),
         )
 
     def validate_runtime(self) -> None:
@@ -66,3 +74,7 @@ class Config:
             raise ValueError("proximity distance and lock delay must be positive")
         if not -127 < self.proximity_reference_rssi_dbm < 0 or self.proximity_path_loss_exponent <= 0:
             raise ValueError("invalid proximity calibration")
+        if self.dynamic_perimeter_max_expansion_meters < 0 or self.dynamic_perimeter_stability_covariance <= 0:
+            raise ValueError("invalid dynamic perimeter configuration")
+        if self.network_guard_check_interval_seconds <= 0:
+            raise ValueError("network guard check interval must be positive")
