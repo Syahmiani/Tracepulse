@@ -14,6 +14,7 @@ from .security.sessions import UnlockAssertion,verify_unlock_assertion
 from .security.tls import server_context
 from .sensors.heartbeat import HeartbeatMonitor
 from .sensors.ble_rssi import BleRssiCollector
+from .sensors.ble_rssi_simulator import SimulatedBleRssiCollector
 from .sensors.arp_guard import ArpGuard
 from .sensors.network_context import NetworkContextCollector
 from .ai.kalman import KalmanFilter1D,rssi_to_distance_meters
@@ -94,7 +95,7 @@ class Services:
     def perimeter_snapshot(self):
         trusted=self.last_context.get("wifi_is_trusted") if self.last_context else None
         reading=self.perimeter.evaluate(rssi_covariance=self.last_rssi_covariance,network_is_trusted=trusted)
-        return {"base_limit_meters":reading.base_limit_meters,"effective_limit_meters":reading.effective_limit_meters,"expanded":reading.expanded,"reason":reading.reason}
+        return {"base_limit_meters":reading.base_limit_meters,"effective_limit_meters":reading.effective_limit_meters,"expanded":reading.expanded,"reason":reading.reason,"simulated":self.config.ble_simulate}
     def scheduler_snapshot(self):
         active=self.scheduler.active_at(datetime.now())
         return {"schedules":[s.as_dict() for s in self.scheduler.list()],"active_lock":active.as_dict() if active else None}
@@ -129,8 +130,13 @@ class Services:
             except Exception:self.app.logger.exception("watchdog failure")
             time.sleep(.1)
     async def ble_loop(self):
-        if not self.config.ble_service_uuid:return
-        async for item in BleRssiCollector(service_uuid=self.config.ble_service_uuid,adapter=self.config.ble_adapter).stream():
+        if self.config.ble_simulate:
+            collector=SimulatedBleRssiCollector(adapter=self.config.ble_adapter)
+        elif self.config.ble_service_uuid:
+            collector=BleRssiCollector(service_uuid=self.config.ble_service_uuid,adapter=self.config.ble_adapter)
+        else:
+            return
+        async for item in collector.stream():
             estimate=self.filter.update(item.rssi_dbm,item.timestamp_monotonic)
             self.last_ble=item.timestamp_monotonic; self.last_rssi=estimate.filtered_dbm; self.last_rssi_covariance=estimate.covariance; self.last_distance_meters=rssi_to_distance_meters(self.last_rssi,self.config.proximity_reference_rssi_dbm,self.config.proximity_path_loss_exponent)
     def start_ble(self):

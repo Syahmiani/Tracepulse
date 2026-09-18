@@ -34,6 +34,7 @@ class Config:
     dynamic_perimeter_stability_covariance: float = 6.0
     trusted_bssids: tuple[str, ...] = ()
     network_guard_check_interval_seconds: float = 5.0
+    ble_simulate: bool = False
 
     @classmethod
     def from_env(cls, testing: bool = False) -> "Config":
@@ -61,6 +62,7 @@ class Config:
             dynamic_perimeter_stability_covariance=float(os.getenv("TRACEPULSE_PERIMETER_STABILITY_COVARIANCE", cls.dynamic_perimeter_stability_covariance)),
             trusted_bssids=tuple(x.strip() for x in os.getenv("TRACEPULSE_TRUSTED_BSSIDS", "").split(",") if x.strip()),
             network_guard_check_interval_seconds=float(os.getenv("TRACEPULSE_NETWORK_GUARD_INTERVAL_SECONDS", cls.network_guard_check_interval_seconds)),
+            ble_simulate=_env_bool("TRACEPULSE_BLE_SIMULATE", cls.ble_simulate),
         )
 
     def validate_runtime(self) -> None:
