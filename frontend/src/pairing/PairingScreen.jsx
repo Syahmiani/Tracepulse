@@ -2,7 +2,11 @@ import React,{useEffect,useRef,useState} from "react";
 import QRCode from "qrcode";
 import {base64UrlDecode,base64UrlEncode,createX25519KeyPair,deriveSessionKey,deriveX25519SharedSecret,getBrowserIdentity,makeClientPairingConfirmation,verifyServerPairingConfirmation} from "../security/crypto";
 
-const serviceOrigin=import.meta.env.VITE_SERVICE_URL||`https://${location.hostname}:8443`;
+const localLoopback = ["localhost", "127.0.0.1", "::1"].includes(location.hostname) || /^127\./.test(location.hostname);
+const serviceOrigin = import.meta.env.VITE_SERVICE_URL || (localLoopback ? "http://127.0.0.1:8443" : `https://${location.hostname}:8443`);
+const publicFrontendOrigin = import.meta.env.VITE_PUBLIC_FRONTEND_ORIGIN || location.origin;
+
+function DeviceIdentity({title,identity={},fingerprint}){return <section className="pairing-identity" aria-label={`${title} identity`}><h2>{title}</h2><dl><div><dt>Device</dt><dd>{identity.hostname||identity.device_name||identity.label||"Not reported"}</dd></div><div><dt>Model</dt><dd>{identity.model||"Not reported"}</dd></div><div><dt>User</dt><dd>{identity.user||"Not reported"}</dd></div><div><dt>IP address</dt><dd>{identity.ip||"Not reported"}</dd></div><div><dt>MAC address</dt><dd>{identity.mac||"Not exposed by browser"}</dd></div><div><dt>Identity key</dt><dd>{fingerprint||"Verified during encrypted handshake"}</dd></div></dl></section>}
 
 function StartupScreen(){return <main className="startup-screen">
     <div className="startup-circuit" aria-hidden="true"/>
@@ -26,6 +30,10 @@ export default function PairingScreen({onPaired,phoneMode=false}){
     const [phoneConfirmed,setPhoneConfirmed]=useState(false);
     const [laptopPending,setLaptopPending]=useState(false);
     const [pendingSession,setPendingSession]=useState(null);
+    const [pairingReview,setPairingReview]=useState(null);
+    const [pendingIdentity,setPendingIdentity]=useState(null);
+    const [laptopIdentity,setLaptopIdentity]=useState(null);
+    const [serverKeyFingerprint,setServerKeyFingerprint]=useState("");
     const [log,setLog]=useState(["System initialized","Security protocols engaged","Awaiting phone connection..."]);
     const offerStarted=useRef(false);
 
@@ -43,10 +51,12 @@ export default function PairingScreen({onPaired,phoneMode=false}){
         fetch(`${serviceOrigin}/api/pairing/prepare`,{method:"POST",headers:{"Content-Type":"application/json"},body:"{}"})
             .then(response=>{if(!response.ok)throw Error("pairing offer unavailable");return response.json();})
             .then(offer=>{
+                setLaptopIdentity(offer.laptop);setServerKeyFingerprint(offer.server_key_fingerprint);
                 const source=new URL(offer.qr_payload);
                 const params=new URLSearchParams(source.hash.slice(1));
                 params.set("service_origin",serviceOrigin);
-                const pairingUrl=`${location.origin}${location.pathname}?role=phone#${params}`;
+                params.set("server_key_fingerprint",offer.server_key_fingerprint);
+                const pairingUrl=`${publicFrontendOrigin}${location.pathname}?role=phone#${params}`;
                 return Promise.all([pairingUrl,QRCode.toDataURL(pairingUrl,{margin:2,width:300})]);
             })
             .then(([value,image])=>{if(!cancelled){setPayload(value);setQr(image);setLog(items=>[...items,"Secure pairing QR generated"]);}})
@@ -62,7 +72,7 @@ export default function PairingScreen({onPaired,phoneMode=false}){
                 const response=await fetch(`${serviceOrigin}/api/status`,{cache:"no-store"});
                 if(!response.ok)return;
                 const status=await response.json();
-                if(!stopped&&status.session?.active&&!status.session?.approved)setLaptopPending(true);
+                if(!stopped&&status.session?.active&&!status.session?.approved){setLaptopPending(true);setPendingIdentity({phone:{...status.network?.phone,label:status.session.device_label},fingerprint:status.session.device_key_fingerprint});}
             }catch(exception){if(!stopped)setError(exception.message||"monitor status unavailable");}
         };
         const id=setInterval(check,1000);
@@ -84,7 +94,7 @@ export default function PairingScreen({onPaired,phoneMode=false}){
         return()=>{stopped=true;clearInterval(id);};
     },[pendingSession,onPaired]);
 
-    async function pair(){
+    async function reviewPairing(){
         setBusy(true);setError("");setLog(items=>[...items,"Phone QR scanned","Establishing encrypted link..."]);
         try{
             const url=new URL(payload.trim());
@@ -95,19 +105,31 @@ export default function PairingScreen({onPaired,phoneMode=false}){
             const native=window.Capacitor?.Plugins?.TracePulseNative;
             const browserIdentity=getBrowserIdentity();
             const identity=native?.getIdentityPublicKey?await native.getIdentityPublicKey():{public_key_b64:base64UrlEncode(browserIdentity.publicKey)};
-            const deviceInfo=native?.getDeviceInfo?await native.getDeviceInfo():{model:navigator.userAgent};
+            const deviceInfo=native?.getDeviceInfo?await native.getDeviceInfo():{model:"TracePulse browser"};
             const begin=await fetch(`${apiOrigin}/api/pairing/begin`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({handle,token})});
             if(!begin.ok){let detail="pairing challenge rejected";try{const body=await begin.json();if(body.error)detail=`pairing challenge rejected: ${body.error}`;}catch{}throw Error(detail);}
             const challenge=await begin.json();
+            const expectedFingerprint=params.get("server_key_fingerprint");
+            if(expectedFingerprint&&expectedFingerprint!==challenge.server_key_fingerprint)throw Error("server identity mismatch; do not continue");
             const pairKeys=await createX25519KeyPair();
             const shared=deriveX25519SharedSecret(pairKeys.privateKey,base64UrlDecode(challenge.server_public_key_b64));
             const confirmation=await makeClientPairingConfirmation(shared,base64UrlDecode(challenge.challenge_b64));
-            const complete=await fetch(`${apiOrigin}/api/pairing/complete`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({handle,token,challenge_b64:challenge.challenge_b64,phone_public_key_b64:base64UrlEncode(pairKeys.publicKey),device_signing_public_key_b64:identity.public_key_b64,client_confirmation_b64:confirmation,device_label:deviceInfo.model||"TracePulse phone",device_model:deviceInfo.model||"unknown"})});
+            setPairingReview({apiOrigin,handle,token,challenge,laptop:challenge.laptop,pairKeys,shared,confirmation,identity,browserIdentity,deviceInfo});
+            setBusy(false);
+        }catch(exception){setError(exception.message||"pairing review failed");setBusy(false);}
+    }
+
+    async function completePairing(){
+        setBusy(true);setError("");
+        try{
+            const {apiOrigin,handle,token,challenge,pairKeys,confirmation,identity,deviceInfo}=pairingReview;
+            const deviceLabel=typeof deviceInfo==="string"?deviceInfo:deviceInfo.model||deviceInfo.name||"TracePulse phone";
+            const complete=await fetch(`${apiOrigin}/api/pairing/complete`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({handle,token,challenge_b64:challenge.challenge_b64,phone_public_key_b64:base64UrlEncode(pairKeys.publicKey),device_signing_public_key_b64:identity.public_key_b64,client_confirmation_b64:confirmation,device_label:deviceLabel,device_model:deviceLabel})});
             if(!complete.ok)throw Error("pairing completion rejected");
             const result=await complete.json();
-            if(!await verifyServerPairingConfirmation(shared,base64UrlDecode(challenge.challenge_b64),result.server_confirmation_b64))throw Error("server confirmation failed");
+            if(!await verifyServerPairingConfirmation(pairingReview.shared,base64UrlDecode(challenge.challenge_b64),result.server_confirmation_b64))throw Error("server confirmation failed");
             setLog(items=>[...items,"Secure link established","Phone executor ready"]);
-            setPendingSession({origin:apiOrigin,sessionId:result.session_id,sessionKey:await deriveSessionKey(shared,base64UrlDecode(result.session_key_salt_b64)),deviceId:result.device_id,identity:browserIdentity});
+            setPhoneConfirmed(true);setPendingSession({origin:apiOrigin,sessionId:result.session_id,sessionKey:await deriveSessionKey(pairingReview.shared,base64UrlDecode(result.session_key_salt_b64)),deviceId:result.device_id,identity:pairingReview.browserIdentity});
         }catch(exception){setError(exception.message||"pairing failed");setBusy(false);}
     }
 
@@ -121,15 +143,15 @@ export default function PairingScreen({onPaired,phoneMode=false}){
     };
 
     if(!showStart)return <StartupScreen/>;
-    if(scanned)return <main className="start-shell phone-pair-shell"><section className="start-panel pair-progress"><p className="start-eyebrow">TRACEPULSE // SECURE LINK</p><h1>PAIR WITH THIS LAPTOP?</h1><p>Confirm to establish the encrypted TracePulse phone executor link.</p>{!phoneConfirmed?<button className="pair-confirm-button" disabled={busy} onClick={()=>{setPhoneConfirmed(true);pair();}}>{busy?"PAIRING…":"ACCEPT PAIRING"}</button>:<><div className="scan-pulse">◉</div><p>Phone accepted. Waiting for laptop confirmation before opening the dashboard.</p></>}{error&&<p className="start-error">{error}</p>}</section></main>;
-    if(laptopPending)return <main className="start-shell phone-pair-shell"><section className="start-panel pair-progress"><p className="start-eyebrow">TRACEPULSE // LAPTOP APPROVAL</p><h1>PHONE PAIRING REQUEST</h1><p>A phone has accepted the QR pairing request. Confirm this trusted device on the laptop.</p><button className="pair-confirm-button" disabled={busy} onClick={acceptOnLaptop}>{busy?"APPROVING…":"ACCEPT PAIRING"}</button></section></main>;
+    if(scanned)return <main className="start-shell phone-pair-shell"><section className="start-panel pair-progress"><p className="start-eyebrow">TRACEPULSE // SECURE LINK</p><h1>PAIR WITH THIS LAPTOP?</h1><p>{pairingReview?"Review the laptop identity before accepting the encrypted link.":"Verify the laptop identity before continuing."}</p>{pairingReview&&<DeviceIdentity title="LAPTOP IDENTITY" identity={pairingReview.laptop} fingerprint={pairingReview.challenge.server_key_fingerprint}/>} {!pairingReview?<button className="pair-confirm-button" disabled={busy} onClick={reviewPairing}>{busy?"CHECKING…":"REVIEW LAPTOP"}</button>:!phoneConfirmed?<button className="pair-confirm-button" disabled={busy} onClick={completePairing}>{busy?"PAIRING…":"ACCEPT PAIRING"}</button>:<><div className="scan-pulse">◉</div><p>Phone accepted. Waiting for laptop confirmation before opening the dashboard.</p></>}{error&&<p className="start-error">{error}</p>}</section></main>;
+    if(laptopPending)return <main className="start-shell phone-pair-shell"><section className="start-panel pair-progress"><p className="start-eyebrow">TRACEPULSE // LAPTOP APPROVAL</p><h1>PHONE PAIRING REQUEST</h1><p>A phone has accepted the QR pairing request. Verify its identity before approving.</p><DeviceIdentity title="PHONE IDENTITY" identity={pendingIdentity?.phone} fingerprint={pendingIdentity?.fingerprint}/><button className="pair-confirm-button" disabled={busy} onClick={acceptOnLaptop}>{busy?"APPROVING…":"ACCEPT PAIRING"}</button></section></main>;
     if(phoneMode)return <main className="start-shell phone-pair-shell"><section className="start-panel pair-progress"><p className="start-eyebrow">TRACEPULSE // PHONE EXECUTOR</p><h1>READY TO SCAN</h1><p>TracePulse was unpaired. Scan the new QR code displayed on the laptop to pair again.</p><div className="scan-pulse">◉</div></section></main>;
     return <main className="pairing-screen">
         <div className="pairing-circuit" aria-hidden="true"/>
         <header className="pairing-topbar"><strong>TRACEPULSE</strong><span>01&nbsp; / &nbsp;CONNECT YOUR PHONE</span></header>
         <section className="pairing-content">
             <article className="pairing-instructions"><p>SECURE LINK / SETUP</p><h1>Your phone is<br/>your security key.</h1><div className="pairing-copy">Pair once. Stay protected wherever you work. Your laptop monitors the trusted connection while your phone stays close.</div><ol><li>Scan the QR code with your phone</li><li>Review and accept the pairing request</li><li>Keep your phone nearby to stay unlocked</li></ol><aside><strong>ENCRYPTED BY DESIGN</strong><span>One-time link · TLS 1.3 secure channel</span></aside></article>
-            <article className="pairing-qr-panel"><h2>SECURE PAIRING</h2><p>Scan with your phone camera</p>{qr?<img className="pairing-qr" src={qr} alt="TracePulse phone pairing QR code"/>:<div className="pairing-qr-placeholder" aria-live="polite">GENERATING SECURE QR…</div>}<strong className="pairing-qr-status">{qr?"ONE-TIME ENCRYPTED LINK":"PREPARING ONE-TIME LINK"}</strong>{error&&<p className="pairing-error">{error}</p>}</article>
+            <article className="pairing-qr-panel"><h2>SECURE PAIRING</h2><p>Scan with your phone camera</p>{qr?<img className="pairing-qr" src={qr} alt="TracePulse phone pairing QR code"/>:<div className="pairing-qr-placeholder" aria-live="polite">GENERATING SECURE QR…</div>}<strong className="pairing-qr-status">{qr?"ONE-TIME ENCRYPTED LINK":"PREPARING ONE-TIME LINK"}</strong>{serverKeyFingerprint&&<span className="pairing-fingerprint">SERVER KEY / {serverKeyFingerprint}</span>}{error&&<p className="pairing-error">{error}</p>}</article>
         </section>
     </main>;
 }

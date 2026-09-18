@@ -1,5 +1,6 @@
 from flask import Blueprint,current_app,jsonify,request
 import ipaddress
+from ..security.pairing import b64,public_key_fingerprint
 bp=Blueprint("status_api",__name__,url_prefix="/api/status")
 def local():
     if current_app.config.get("TRACEPULSE_LOCAL_STATUS_ONLY",True):
@@ -13,6 +14,7 @@ def status():
     try:
         local(); runtime=current_app.extensions["tracepulse_runtime"]; session=current_app.extensions["tracepulse_sessions"].active(); heartbeat=current_app.extensions["tracepulse_heartbeat"]; audit=current_app.extensions["tracepulse_audit"]; os_state=runtime.os_status(); decision=runtime.decision_snapshot()
         network=runtime.network_snapshot(); network["phone"]["model"]=runtime.phone_model or "not reported"
-        return jsonify({"service":"tracepulse","state":decision["state"],"session":{"active":bool(session),"approved":session.approved if session else False,"device_label":session.device_label if session else None,"session_id_prefix":session.session_id[:12] if session else None},"heartbeat":{"age_seconds":heartbeat.age_seconds(),"expired":heartbeat.expired(),"received_count":heartbeat.received_count},"os_session":os_state,"decision":decision,"network":network,"perimeter":{"limit_meters":runtime.config.proximity_distance_meters,"lock_delay_seconds":runtime.config.proximity_lock_delay_seconds,"distance_meters":runtime.last_distance_meters,"rssi_dbm":runtime.last_rssi,"inside":runtime.last_distance_meters is not None and runtime.last_distance_meters<=runtime.config.proximity_distance_meters},"audit":{"valid":audit.verify()}})
+        session_data={"active":bool(session),"approved":session.approved if session else False,"device_label":session.device_label if session else None,"session_id_prefix":session.session_id[:12] if session else None,"device_key_fingerprint":public_key_fingerprint(b64(session.device_signing_public_key)) if session else None}
+        return jsonify({"service":"tracepulse","state":decision["state"],"session":session_data,"heartbeat":{"age_seconds":heartbeat.age_seconds(),"expired":heartbeat.expired(),"received_count":heartbeat.received_count},"os_session":os_state,"decision":decision,"network":network,"perimeter":{"limit_meters":runtime.config.proximity_distance_meters,"lock_delay_seconds":runtime.config.proximity_lock_delay_seconds,"distance_meters":runtime.last_distance_meters,"rssi_dbm":runtime.last_rssi,"inside":runtime.last_distance_meters is not None and runtime.last_distance_meters<=runtime.config.proximity_distance_meters},"audit":{"valid":audit.verify()}})
     except PermissionError as e:return jsonify({"error":str(e)}),403
     except Exception: current_app.logger.exception("status failed"); return jsonify({"error":"status unavailable"}),503

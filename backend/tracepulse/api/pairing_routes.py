@@ -2,7 +2,7 @@ from __future__ import annotations
 import hashlib, ipaddress, json
 from datetime import datetime, timezone
 from flask import Blueprint,current_app,jsonify,request
-from ..security.pairing import PairingError,PairingManager,b64
+from ..security.pairing import PairingError,PairingManager,b64,public_key_fingerprint
 from ..security.sessions import SessionError,SessionManager
 bp=Blueprint("pairing_api",__name__,url_prefix="/api/pairing")
 def ext(name):
@@ -22,10 +22,11 @@ def local_only():
     if not address.is_loopback: raise PermissionError("local request required")
 def error(message,status): return jsonify({"error":message}),status
 def device_id(key): return hashlib.sha256(key.encode()).hexdigest()[:32]
+def pairing_options(): return {"allow_insecure_local": current_app.config["TRACEPULSE_CONFIG"].allow_insecure_local}
 @bp.post("/offer")
 def offer():
     try:
-        local_only(); value=body() if request.data else {}; service_url=current_app.config["TRACEPULSE_SERVICE_URL"]; result=ext("tracepulse_pairing").create_offer(service_url=service_url,ttl_seconds=float(value.get("ttl_seconds",120)))
+        local_only(); value=body() if request.data else {}; service_url=current_app.config["TRACEPULSE_SERVICE_URL"]; result=ext("tracepulse_pairing").create_offer(service_url=service_url,ttl_seconds=float(value.get("ttl_seconds",120)),**pairing_options())
         return jsonify({"handle":result.handle,"qr_payload":result.qr_payload,"expires_at_epoch":result.expires_at_epoch,"server_public_key_b64":result.server_public_key_b64}),201
     except PermissionError as e:return error(str(e),403)
     except (ValueError,PairingError) as e:return error(str(e),400)
@@ -44,8 +45,9 @@ def prepare():
         db=ext("tracepulse_db")
         with db.transaction() as conn:
             conn.execute("UPDATE sessions SET status='revoked',revoked_reason='pairing reset' WHERE status='active'")
-        result=pairing.create_offer(service_url=current_app.config["TRACEPULSE_SERVICE_URL"],ttl_seconds=float(value.get("ttl_seconds",120)))
-        return jsonify({"handle":result.handle,"qr_payload":result.qr_payload,"expires_at_epoch":result.expires_at_epoch,"server_public_key_b64":result.server_public_key_b64}),201
+        result=pairing.create_offer(service_url=current_app.config["TRACEPULSE_SERVICE_URL"],ttl_seconds=float(value.get("ttl_seconds",120)),**pairing_options())
+        identity=ext("tracepulse_runtime").network_snapshot()["laptop"]
+        return jsonify({"handle":result.handle,"qr_payload":result.qr_payload,"expires_at_epoch":result.expires_at_epoch,"server_public_key_b64":result.server_public_key_b64,"server_key_fingerprint":public_key_fingerprint(result.server_public_key_b64),"laptop":identity}),201
     except PermissionError as e:return error(str(e),403)
     except (ValueError,PairingError) as e:return error(str(e),400)
     except Exception:
@@ -69,7 +71,7 @@ def reset():
 @bp.post("/begin")
 def begin():
     try:
-        value=body(); result=ext("tracepulse_pairing").begin(handle=string(value.get("handle"),"handle",256),token=string(value.get("token"),"token")); return jsonify(result.__dict__)
+        value=body(); result=ext("tracepulse_pairing").begin(handle=string(value.get("handle"),"handle",256),token=string(value.get("token"),"token")); response=dict(result.__dict__); response["server_key_fingerprint"]=public_key_fingerprint(result.server_public_key_b64); response["laptop"]=ext("tracepulse_runtime").network_snapshot()["laptop"]; return jsonify(response)
     except (ValueError,PairingError) as e:return error(str(e),400)
 @bp.post("/complete")
 def complete():

@@ -1,4 +1,7 @@
 import {ed25519,x25519} from '@noble/curves/ed25519.js';
+import {hmac} from '@noble/hashes/hmac.js';
+import {hkdf as nobleHkdf} from '@noble/hashes/hkdf.js';
+import {sha256} from '@noble/hashes/sha256.js';
 const encoder = new TextEncoder();
 const asBytes = v => v instanceof Uint8Array ? v : new Uint8Array(v);
 
@@ -25,27 +28,11 @@ const canonicalize = value => {
 export const canonicalJson = value => JSON.stringify(canonicalize(value));
 
 async function hmacSha256(key, value) {
-    const cryptoKey = await crypto.subtle.importKey(
-        "raw",
-        asBytes(key),
-        {name: "HMAC", hash: "SHA-256"},
-        false,
-        ["sign"]
-    );
-    return new Uint8Array(await crypto.subtle.sign(
-        "HMAC",
-        cryptoKey,
-        typeof value === "string" ? encoder.encode(value) : asBytes(value)
-    ));
+    return hmac(sha256,asBytes(key),typeof value === "string"?encoder.encode(value):asBytes(value));
 }
 
 async function hkdf(sharedSecret, info) {
-    const key = await crypto.subtle.importKey("raw", asBytes(sharedSecret), "HKDF", false, ["deriveBits"]);
-    return new Uint8Array(await crypto.subtle.deriveBits(
-        {name: "HKDF", hash: "SHA-256", salt: new Uint8Array(0), info: encoder.encode(info)},
-        key,
-        256
-    ));
+    return nobleHkdf(sha256,asBytes(sharedSecret),new Uint8Array(0),encoder.encode(info),32);
 }
 
 export async function createX25519KeyPair() {
@@ -77,12 +64,7 @@ export function deriveX25519SharedSecret(privateKey, publicKey) {
 }
 
 export async function deriveSessionKey(sharedSecret, salt) {
-    const key = await crypto.subtle.importKey("raw", asBytes(sharedSecret), "HKDF", false, ["deriveBits"]);
-    return new Uint8Array(await crypto.subtle.deriveBits(
-        {name: "HKDF", hash: "SHA-256", salt: asBytes(salt), info: encoder.encode("tracepulse/session-key/v1")},
-        key,
-        256
-    ));
+    return nobleHkdf(sha256,asBytes(sharedSecret),asBytes(salt),encoder.encode("tracepulse/session-key/v1"),32);
 }
 
 export async function makeClientPairingConfirmation(sharedSecret, challenge) {

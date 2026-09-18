@@ -6,9 +6,12 @@ import {SignedSocket} from "./security/signedSocket";
 
 export default function App() {
     const [session, setSession] = useState(null);
-    const [view, setView] = useState("laptop");
     const [error, setError] = useState("");
-    const [phoneMode] = useState(() => location.hash.includes("pairing_handle") || new URLSearchParams(location.search).get("role") === "phone" || localStorage.getItem("tracepulse.role") === "phone");
+    const [phoneMode] = useState(() => {
+        const role = new URLSearchParams(location.search).get("role");
+        return location.hash.includes("pairing_handle") || (role ? role === "phone" : false);
+    });
+    const [view, setView] = useState(() => phoneMode ? "mobile" : "laptop");
     const socket = useMemo(() => session && !session.dashboardOnly ? new SignedSocket({
         origin: session.origin,
         sessionId: session.sessionId,

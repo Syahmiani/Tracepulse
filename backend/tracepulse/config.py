@@ -29,6 +29,7 @@ class Config:
     local_admin_only: bool = True
     local_status_only: bool = True
     calibration_mode: bool = False
+    allow_insecure_local: bool = True
     testing: bool = False
 
     @classmethod
@@ -52,12 +53,18 @@ class Config:
             local_admin_only=_env_bool("TRACEPULSE_LOCAL_ADMIN_ONLY", cls.local_admin_only),
             local_status_only=_env_bool("TRACEPULSE_LOCAL_STATUS_ONLY", cls.local_status_only),
             calibration_mode=_env_bool("TRACEPULSE_CALIBRATION_MODE", cls.calibration_mode),
+            allow_insecure_local=_env_bool("TRACEPULSE_ALLOW_INSECURE_LOCAL", cls.allow_insecure_local),
             testing=testing,
         )
 
     def validate_runtime(self) -> None:
-        if not self.service_url.startswith("https://"):
-            raise ValueError("service_url must use HTTPS")
+        if self.service_url.startswith("http://"):
+            if not self.allow_insecure_local:
+                raise ValueError("HTTP service URLs require TRACEPULSE_ALLOW_INSECURE_LOCAL=true")
+        elif self.service_url.startswith("https://"):
+            pass
+        else:
+            raise ValueError("service_url must use HTTP or HTTPS")
         if not 1 <= self.port <= 65535:
             raise ValueError("port must be between 1 and 65535")
         if self.heartbeat_timeout_seconds <= 0 or self.ble_max_age_seconds <= 0:

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import base64, hashlib, hmac, secrets, threading, time
+import base64, hashlib, hmac, ipaddress, secrets, threading, time
 from dataclasses import dataclass, field
 from urllib.parse import urlencode, urlsplit, urlunsplit
 from cryptography.hazmat.primitives import hashes, serialization
@@ -16,6 +16,10 @@ def unb64(value: str) -> bytes:
     if not isinstance(value, str) or not value or len(value) > 4096:
         raise ValueError("invalid base64 value")
     return base64.urlsafe_b64decode(value + "=" * (-len(value) % 4))
+
+
+def public_key_fingerprint(value_b64: str) -> str:
+    return hashlib.sha256(unb64(value_b64)).hexdigest()[:24].upper()
 
 
 def confirmation_key(shared: bytes) -> bytes:
@@ -55,13 +59,20 @@ class PairingManager:
         self._lock = threading.RLock()
 
     @staticmethod
-    def _check_url(url: str) -> None:
+    def _check_url(url: str, allow_insecure_local: bool = False) -> None:
         parsed = urlsplit(url)
-        if parsed.scheme != "https" or not parsed.netloc or parsed.query:
+        local_http = False
+        if parsed.scheme == "http" and parsed.hostname:
+            try:
+                address = ipaddress.ip_address(parsed.hostname)
+                local_http = address.is_loopback or address.is_private
+            except ValueError:
+                local_http = parsed.hostname == "localhost"
+        if (parsed.scheme != "https" and not (allow_insecure_local and local_http)) or not parsed.netloc or parsed.query:
             raise PairingError("service_url must be an HTTPS URL without a query")
 
-    def create_offer(self, *, service_url: str, ttl_seconds: float = 120) -> PairingOffer:
-        self._check_url(service_url)
+    def create_offer(self, *, service_url: str, ttl_seconds: float = 120, allow_insecure_local: bool = False) -> PairingOffer:
+        self._check_url(service_url, allow_insecure_local=allow_insecure_local)
         if not 1 <= ttl_seconds <= 600: raise PairingError("invalid offer lifetime")
         with self._lock:
             self._purge()

@@ -7,7 +7,7 @@ class SecureSocketServer:
     def __init__(self,socketio,services): self.socketio=socketio; self.services=services; self.guards={}
     def register(self):
         @self.socketio.on("connect")
-        def connect(): return self.services.config.testing or request.environ.get("wsgi.url_scheme")=="https"
+        def connect(): return self.services.config.testing or request.environ.get("wsgi.url_scheme")=="https" or (self.services.config.allow_insecure_local and request.environ.get("wsgi.url_scheme")=="http")
         @self.socketio.on("secure_message")
         def secure_message(raw):
             try:

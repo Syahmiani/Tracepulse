@@ -1,5 +1,5 @@
 from __future__ import annotations
-import asyncio,getpass,os,secrets,socket,subprocess,time,uuid
+import asyncio,getpass,os,re,secrets,socket,subprocess,time,uuid
 from dataclasses import replace
 from flask import Flask,make_response,request
 from flask_socketio import SocketIO
@@ -35,6 +35,12 @@ class Services:
             try:
                 neighbor=subprocess.run(["ip","neigh","show",self.phone_ip],capture_output=True,text=True,timeout=1,check=False).stdout.split()
                 if "lladdr" in neighbor: phone_mac=neighbor[neighbor.index("lladdr")+1]
+            except (OSError,subprocess.SubprocessError): pass
+        if not phone_mac and self.phone_ip:
+            try:
+                arp_output=subprocess.run(["arp","-a",self.phone_ip],capture_output=True,text=True,timeout=1,check=False).stdout
+                match=re.search(r"(?:[0-9a-f]{2}[-:]){5}[0-9a-f]{2}",arp_output,re.IGNORECASE)
+                if match: phone_mac=match.group(0).replace("-",":").lower()
             except (OSError,subprocess.SubprocessError): pass
         return {"laptop":{"hostname":socket.gethostname(),"user":getpass.getuser(),"ip":host_ip,"mac":mac},"phone":{"ip":self.phone_ip or "not observed","mac":phone_mac or "not exposed","last_seen_epoch":self.phone_last_seen}}
     def lock_now(self,*,reason):
@@ -92,8 +98,13 @@ def create_app(overrides=None):
     @app.after_request
     def add_frontend_cors(response):
         origin=request.headers.get("Origin")
-        if frontend_origin=="*" or origin==frontend_origin:
-            response.headers["Access-Control-Allow-Origin"]=frontend_origin if frontend_origin!="*" else "*"
+        if frontend_origin=="*":
+            response.headers["Access-Control-Allow-Origin"]="*"
+            response.headers["Access-Control-Allow-Methods"]="GET,POST,OPTIONS"
+            response.headers["Access-Control-Allow-Headers"]="Content-Type"
+            return response
+        if origin and (origin==frontend_origin or origin.startswith("http://localhost:") or origin.startswith("http://127.0.0.1:") or origin.startswith("http://[::1]:")):
+            response.headers["Access-Control-Allow-Origin"]=origin or frontend_origin
             response.headers["Access-Control-Allow-Methods"]="GET,POST,OPTIONS"
             response.headers["Access-Control-Allow-Headers"]="Content-Type"
         return response
@@ -104,7 +115,11 @@ def create_socketio(app):
     socketio=SocketIO(app,async_mode="threading",cors_allowed_origins=os.getenv("TRACEPULSE_FRONTEND_ORIGIN","*"),logger=False,engineio_logger=False); server=SecureSocketServer(socketio,app.extensions["tracepulse_runtime"]); server.register(); services=app.extensions["tracepulse_runtime"]; socketio.start_background_task(services.watchdog); socketio.start_background_task(services.start_ble); return socketio
 
 def main():
-    app=create_app(); socketio=create_socketio(app); config=app.config["TRACEPULSE_CONFIG"]; context=server_context(config.tls_cert,config.tls_key); socketio.run(app,host=config.bind_host,port=config.port,ssl_context=context,allow_unsafe_werkzeug=True)
+    app=create_app(); socketio=create_socketio(app); config=app.config["TRACEPULSE_CONFIG"]
+    if config.service_url.startswith("http://"):
+        socketio.run(app,host=config.bind_host,port=config.port,allow_unsafe_werkzeug=True)
+    else:
+        context=server_context(config.tls_cert,config.tls_key); socketio.run(app,host=config.bind_host,port=config.port,ssl_context=context,allow_unsafe_werkzeug=True)
 
 if __name__ == "__main__":
     main()
