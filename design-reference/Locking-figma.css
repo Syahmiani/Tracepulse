@@ -1,0 +1,231 @@
+/* 07 · Locking */
+
+position: relative;
+width: 390px;
+height: 844px;
+
+background: #080A0D;
+border-radius: 28px;
+
+
+/* TRACEPULSE */
+
+position: absolute;
+width: 210px;
+height: 37.4px;
+left: 24px;
+top: 28px;
+
+font-family: 'Orbitron';
+font-style: normal;
+font-weight: 700;
+font-size: 22px;
+line-height: 28px;
+
+
+
+/* LOCK COMMAND */
+
+position: absolute;
+width: 260px;
+height: 24px;
+left: 24px;
+top: 56px;
+
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 400;
+font-size: 11px;
+line-height: 15px;
+
+color: #A5ADB8;
+
+
+
+/* SENDING LOCK COMMAND… */
+
+position: absolute;
+width: 342px;
+height: 47.6px;
+left: 24px;
+top: 142px;
+
+font-family: 'Rajdhani';
+font-style: normal;
+font-weight: 600;
+font-size: 28px;
+line-height: 36px;
+text-align: center;
+
+color: #F5F6F8;
+
+
+
+/* Securing your laptop. Please wait. */
+
+position: absolute;
+width: 342px;
+height: 24px;
+left: 24px;
+top: 186px;
+
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 400;
+font-size: 14px;
+line-height: 19px;
+text-align: center;
+
+color: #A5ADB8;
+
+
+
+/* Ellipse */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 192px;
+height: 192px;
+left: 99px;
+top: 244px;
+
+border: 4px solid #FF3D30;
+
+
+/* Ellipse */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 132px;
+height: 132px;
+left: 129px;
+top: 274px;
+
+border: 4px solid #FF3D30;
+
+
+/* LOCK */
+
+position: absolute;
+width: 154px;
+height: 40.8px;
+left: 118px;
+top: 319px;
+
+font-family: 'Orbitron';
+font-style: normal;
+font-weight: 700;
+font-size: 24px;
+line-height: 30px;
+text-align: center;
+
+color: #FF3D30;
+
+
+
+/* Progress Steps */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 342px;
+height: 180px;
+left: 24px;
+top: 485px;
+
+background: #101419;
+border: 1px solid #30343C;
+border-radius: 18px;
+
+
+/* ✓ Authenticating device */
+
+position: absolute;
+width: 300px;
+height: 24px;
+left: 42px;
+top: 508px;
+
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 600;
+font-size: 13px;
+line-height: 18px;
+
+color: #2EDB8C;
+
+
+
+/* ✓ Sending encrypted command */
+
+position: absolute;
+width: 300px;
+height: 24px;
+left: 42px;
+top: 544px;
+
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 600;
+font-size: 13px;
+line-height: 18px;
+
+color: #2EDB8C;
+
+
+
+/* ○ Waiting for OS confirmation */
+
+position: absolute;
+width: 300px;
+height: 24px;
+left: 42px;
+top: 580px;
+
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 600;
+font-size: 13px;
+line-height: 18px;
+
+color: #FF751F;
+
+
+
+/* ○ Verifying lock state */
+
+position: absolute;
+width: 300px;
+height: 24px;
+left: 42px;
+top: 616px;
+
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 400;
+font-size: 13px;
+line-height: 18px;
+
+color: #A5ADB8;
+
+
+
+/* DO NOT CLOSE THE APP */
+
+position: absolute;
+width: 342px;
+height: 24px;
+left: 24px;
+top: 706px;
+
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 600;
+font-size: 11px;
+line-height: 15px;
+text-align: center;
+
+color: #A5ADB8;
+

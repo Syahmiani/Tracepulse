@@ -82,8 +82,8 @@ export default function App() {
 
     const unpair = async () => {
         try {
-            await fetch(`${session.origin}/api/pairing/reset`, {method: "POST"});
-        } finally {
+            const response=await fetch(`${session.origin}/api/pairing/reset`, {method: "POST"});
+            if(!response.ok){const body=await response.json().catch(()=>null);throw Error(body?.error||"unpair request failed");}
             const eventId = String(Date.now());
             localStorage.setItem("tracepulse.reset", eventId);
             if ("BroadcastChannel" in window) {
@@ -92,6 +92,8 @@ export default function App() {
                 channel.close();
             }
             reset();
+        } catch (exception) {
+            setError(exception.message||"unpair request failed");
         }
     };
 

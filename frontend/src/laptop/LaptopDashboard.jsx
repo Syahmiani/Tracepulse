@@ -68,6 +68,24 @@ function SystemInformation({status}) {
     </section>;
 }
 
+function LockedDashboard({status}) {
+    const perimeter = status.perimeter || {};
+    const decision = status.decision || {};
+    const distance = value(perimeter.distance_meters);
+    const boundary = value(perimeter.limit_meters);
+    const trigger = perimeter.distance_meters == null || perimeter.limit_meters == null
+        ? "Security lock is active"
+        : `${distance} m away / outside the ${boundary} m boundary`;
+    return <main className="laptop-locked-screen">
+        <div className="locked-circuit" aria-hidden="true"/>
+        <header className="locked-header"><strong>TRACEPULSE</strong><span>PROTECTION ACTIVE / SESSION PAUSED</span></header>
+        <section className="locked-content">
+            <article className="locked-visual"><div className="locked-orbital" aria-hidden="true"><i className="locked-orbit locked-orbit--outer"/><i className="locked-orbit locked-orbit--middle"/><i className="locked-orbit locked-orbit--inner"/><i className="locked-shackle"/><i className="locked-body"><b/></i><i className="locked-signal">●</i></div><strong>SECURITY NEVER SLEEPS</strong><p>Your files stay protected while you are away.</p></article>
+            <article className="locked-recovery-panel"><p>SESSION SECURED</p><h1>Laptop locked.</h1><div>{value(decision.reason, "TracePulse has locked this laptop to protect your session.")}</div><section className="locked-trigger"><strong>{trigger}</strong><span>{value(decision.model_state, "LOCKED")} / security state locked</span></section><p className="locked-recovery-note">An authorised authentication step from the paired phone is required to unlock this laptop.</p></article>
+        </section>
+    </main>;
+}
+
 export default function LaptopDashboard({session, socket, onUnpair, onShowMobile}) {
     const [status, setStatus] = useState(null);
     const [events, setEvents] = useState([]);
@@ -93,6 +111,8 @@ export default function LaptopDashboard({session, socket, onUnpair, onShowMobile
     const heartbeat = status?.heartbeat || {};
     const auditValid = status?.audit?.valid === true;
     const sessionActive = status?.session?.active === true;
+    if (!status) return <main className="laptop-dashboard-loading" aria-live="polite"><div className="dashboard-circuit" aria-hidden="true"/><p>Loading secure dashboard…</p>{error&&<span>{error}</span>}</main>;
+    if (status.state === "locked") return <LockedDashboard status={status}/>;
     return <main className="security-dashboard">
         <div className="dashboard-circuit" aria-hidden="true"/>
         <aside className="dashboard-sidebar">

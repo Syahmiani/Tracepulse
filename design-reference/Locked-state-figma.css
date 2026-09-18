@@ -1,0 +1,308 @@
+/* 08 · Locked State */
+
+position: relative;
+width: 390px;
+height: 844px;
+
+background: #080A0D;
+border-radius: 28px;
+
+
+/* TRACEPULSE */
+
+position: absolute;
+width: 210px;
+height: 37.4px;
+left: 24px;
+top: 28px;
+
+font-family: 'Orbitron';
+font-style: normal;
+font-weight: 700;
+font-size: 22px;
+line-height: 28px;
+
+
+
+/* OS-CONFIRMED STATE */
+
+position: absolute;
+width: 260px;
+height: 24px;
+left: 24px;
+top: 56px;
+
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 400;
+font-size: 11px;
+line-height: 15px;
+
+color: #A5ADB8;
+
+
+
+/* DEVICE LOCKED */
+
+position: absolute;
+width: 342px;
+height: 57.8px;
+left: 24px;
+top: 185px;
+
+font-family: 'Rajdhani';
+font-style: normal;
+font-weight: 600;
+font-size: 34px;
+line-height: 43px;
+text-align: center;
+
+color: #FF3D30;
+
+
+
+/* Kali Laptop has been locked successfully. */
+
+position: absolute;
+width: 342px;
+height: 24px;
+left: 24px;
+top: 230px;
+
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 400;
+font-size: 14px;
+line-height: 19px;
+text-align: center;
+
+color: #A5ADB8;
+
+
+
+/* Locked Details */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 342px;
+height: 133px;
+left: 24px;
+top: 300px;
+
+background: #101419;
+border: 1px solid #30343C;
+border-radius: 18px;
+
+
+/* LOCKED AT 14 JUL 2025, 11:48 */
+
+position: absolute;
+width: 300px;
+height: 24px;
+left: 42px;
+top: 325px;
+
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 400;
+font-size: 13px;
+line-height: 18px;
+
+color: #A5ADB8;
+
+
+
+/* REASON MANUAL LOCK (PHONE) */
+
+position: absolute;
+width: 300px;
+height: 24px;
+left: 42px;
+top: 360px;
+
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 400;
+font-size: 13px;
+line-height: 18px;
+
+color: #A5ADB8;
+
+
+
+/* STATUS OS CONFIRMED */
+
+position: absolute;
+width: 300px;
+height: 24px;
+left: 42px;
+top: 395px;
+
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 600;
+font-size: 13px;
+line-height: 18px;
+
+color: #FF3D30;
+
+
+
+/* UNLOCK WITH DEVICE CREDENTIAL */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 342px;
+height: 56px;
+left: 24px;
+top: 520px;
+
+background: #101419;
+border: 1px solid #FF751F;
+border-radius: 14px;
+
+
+/* UNLOCK WITH DEVICE CREDENTIAL */
+
+position: absolute;
+width: 342px;
+height: 24px;
+left: 24px;
+top: 533px;
+
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 600;
+font-size: 14px;
+line-height: 19px;
+text-align: center;
+
+color: #F5F6F8;
+
+
+
+/* VIEW ACTIVITY LOGS */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 342px;
+height: 52px;
+left: 24px;
+top: 592px;
+
+background: #101419;
+border: 1px solid #30343C;
+border-radius: 14px;
+
+
+/* VIEW ACTIVITY LOGS */
+
+position: absolute;
+width: 342px;
+height: 24px;
+left: 24px;
+top: 605px;
+
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 600;
+font-size: 14px;
+line-height: 19px;
+text-align: center;
+
+color: #F5F6F8;
+
+
+
+/* Bottom Nav */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 350px;
+height: 52px;
+left: 20px;
+top: 772px;
+
+background: #101419;
+border: 1px solid #30343C;
+border-radius: 18px;
+
+
+/* HOME */
+
+position: absolute;
+width: 76px;
+height: 24px;
+left: 28px;
+top: 790px;
+
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 600;
+font-size: 10px;
+line-height: 14px;
+text-align: center;
+
+color: #FF751F;
+
+
+
+/* DEVICES */
+
+position: absolute;
+width: 76px;
+height: 24px;
+left: 112px;
+top: 790px;
+
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 600;
+font-size: 10px;
+line-height: 14px;
+text-align: center;
+
+color: #A5ADB8;
+
+
+
+/* LOGS */
+
+position: absolute;
+width: 76px;
+height: 24px;
+left: 196px;
+top: 790px;
+
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 600;
+font-size: 10px;
+line-height: 14px;
+text-align: center;
+
+color: #A5ADB8;
+
+
+
+/* SETTINGS */
+
+position: absolute;
+width: 76px;
+height: 24px;
+left: 280px;
+top: 790px;
+
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 600;
+font-size: 10px;
+line-height: 14px;
+text-align: center;
+
+color: #A5ADB8;
+

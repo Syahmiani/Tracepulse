@@ -1,0 +1,236 @@
+/* 06 · Lock Confirmation */
+
+position: relative;
+width: 390px;
+height: 844px;
+
+background: #080A0D;
+border-radius: 28px;
+
+
+/* TRACEPULSE */
+
+position: absolute;
+width: 210px;
+height: 37.4px;
+left: 24px;
+top: 28px;
+
+font-family: 'Orbitron';
+font-style: normal;
+font-weight: 700;
+font-size: 22px;
+line-height: 28px;
+
+
+
+/* LOCK REQUEST */
+
+position: absolute;
+width: 260px;
+height: 24px;
+left: 24px;
+top: 56px;
+
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 400;
+font-size: 11px;
+line-height: 15px;
+
+color: #A5ADB8;
+
+
+
+/* LOCK LAPTOP? */
+
+position: absolute;
+width: 342px;
+height: 51px;
+left: 24px;
+top: 130px;
+
+font-family: 'Rajdhani';
+font-style: normal;
+font-weight: 600;
+font-size: 30px;
+line-height: 38px;
+text-align: center;
+
+color: #F5F6F8;
+
+
+
+/* This will immediately lock your paired laptop. */
+
+position: absolute;
+width: 342px;
+height: 24px;
+left: 24px;
+top: 176px;
+
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 400;
+font-size: 14px;
+line-height: 19px;
+text-align: center;
+
+color: #A5ADB8;
+
+
+
+/* Danger Summary */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 342px;
+height: 180px;
+left: 24px;
+top: 245px;
+
+background: #170A0A;
+border: 2px solid #FF3D30;
+border-radius: 18px;
+
+
+/* KALI LAPTOP */
+
+position: absolute;
+width: 300px;
+height: 30.6px;
+left: 42px;
+top: 270px;
+
+font-family: 'Rajdhani';
+font-style: normal;
+font-weight: 600;
+font-size: 18px;
+line-height: 23px;
+text-align: center;
+
+color: #F5F6F8;
+
+
+
+/* CURRENT STATUS CONNECTED */
+
+position: absolute;
+width: 300px;
+height: 24px;
+left: 42px;
+top: 310px;
+
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 400;
+font-size: 13px;
+line-height: 18px;
+
+color: #A5ADB8;
+
+
+
+/* DISTANCE 3.2 m */
+
+position: absolute;
+width: 300px;
+height: 24px;
+left: 42px;
+top: 340px;
+
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 400;
+font-size: 13px;
+line-height: 18px;
+
+color: #A5ADB8;
+
+
+
+/* CONFIRMATION REQUIRED */
+
+position: absolute;
+width: 300px;
+height: 24px;
+left: 42px;
+top: 370px;
+
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 600;
+font-size: 13px;
+line-height: 18px;
+
+color: #FF3D30;
+
+
+
+/* YES, LOCK NOW */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 342px;
+height: 56px;
+left: 24px;
+top: 485px;
+
+background: #FF3D30;
+border: 1px solid #FF3D30;
+border-radius: 14px;
+
+
+/* YES, LOCK NOW */
+
+position: absolute;
+width: 342px;
+height: 24px;
+left: 24px;
+top: 498px;
+
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 600;
+font-size: 14px;
+line-height: 19px;
+text-align: center;
+
+color: #F5F6F8;
+
+
+
+/* CANCEL */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 342px;
+height: 52px;
+left: 24px;
+top: 556px;
+
+background: #101419;
+border: 1px solid #30343C;
+border-radius: 14px;
+
+
+/* CANCEL */
+
+position: absolute;
+width: 342px;
+height: 24px;
+left: 24px;
+top: 569px;
+
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 600;
+font-size: 14px;
+line-height: 19px;
+text-align: center;
+
+color: #F5F6F8;
+

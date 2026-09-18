@@ -12,6 +12,18 @@ class UnlockAuthorization:
 @dataclass(frozen=True)
 class LockResult:
     action:str; requested:bool; confirmed:bool; dispatch_latency_ms:float; session_id:str|None; reason:str; command_succeeded:bool; message:str; captured_at_utc:str
+
+class UnavailableLockEngine:
+    """Reports a disabled platform lock feature without invoking OS commands."""
+    def __init__(self, message="workstation locking is unavailable on this platform"):
+        self.message=message
+    def _result(self, action, reason):
+        return LockResult(action,True,False,0.0,None,reason,False,self.message,datetime.now(timezone.utc).isoformat())
+    def lock_now(self, *, reason): return self._result("lock",reason)
+    def unlock_authorized(self, *, authorization, reason="verified Android device authorization"):
+        if not authorization.valid(): raise PermissionError("unlock authorization is invalid or expired")
+        return self._result("unlock",reason)
+
 class LockEngine:
     def __init__(self, session=None, state_confirmation_timeout_seconds=.8): self.session=session or KaliSession(); self.timeout=state_confirmation_timeout_seconds; self._lock=threading.Lock()
     def lock_now(self, *, reason): return self._operate("lock",reason)

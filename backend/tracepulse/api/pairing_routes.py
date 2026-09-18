@@ -38,8 +38,10 @@ def prepare():
         local_only()
         value=body() if request.data else {}
         pairing:PairingManager=ext("tracepulse_pairing")
-        pairing.reset()
         sessions:SessionManager=ext("tracepulse_sessions")
+        active=sessions.active()
+        if active and active.status.value=="active": return error("an active pairing already exists; unpair before pairing another device",409)
+        pairing.reset()
         sessions.revoke("pairing reset")
         sessions.reset()
         db=ext("tracepulse_db")

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 
@@ -9,12 +9,23 @@ def _env_bool(name: str, default: bool) -> bool:
     return os.getenv(name, str(default)).lower() in {"1", "true", "yes", "on"}
 
 
+def _default_database_path() -> str:
+    if os.name == "nt":
+        root = Path(os.getenv("LOCALAPPDATA", Path.home() / "AppData" / "Local"))
+        return str(root / "TracePulse" / "tracepulse.sqlite3")
+    return "~/.local/share/tracepulse/tracepulse.sqlite3"
+
+
+def _default_lock_operations_enabled() -> bool:
+    return os.name != "nt"
+
+
 @dataclass(frozen=True)
 class Config:
     service_url: str = "https://192.168.0.152:8443/"
     bind_host: str = "0.0.0.0"
     port: int = 8443
-    database_path: str = "~/.local/share/tracepulse/tracepulse.sqlite3"
+    database_path: str = field(default_factory=_default_database_path)
     tls_cert: str = "config/tls/server.crt"
     tls_key: str = "config/tls/server.key"
     ble_service_uuid: str = "7f5c6e7a-2f8a-4f3d-9a6b-1c0e8d4b2f91"
@@ -30,6 +41,7 @@ class Config:
     local_status_only: bool = True
     calibration_mode: bool = False
     allow_insecure_local: bool = True
+    lock_operations_enabled: bool = field(default_factory=_default_lock_operations_enabled)
     testing: bool = False
 
     @classmethod
@@ -38,7 +50,7 @@ class Config:
             service_url=os.getenv("TRACEPULSE_SERVICE_URL", cls.service_url),
             bind_host=os.getenv("TRACEPULSE_BIND_HOST", cls.bind_host),
             port=int(os.getenv("TRACEPULSE_PORT", cls.port)),
-            database_path=os.getenv("TRACEPULSE_DATABASE_PATH", cls.database_path),
+            database_path=os.getenv("TRACEPULSE_DATABASE_PATH", _default_database_path()),
             tls_cert=os.getenv("TRACEPULSE_TLS_CERT", cls.tls_cert),
             tls_key=os.getenv("TRACEPULSE_TLS_KEY", cls.tls_key),
             ble_service_uuid=os.getenv("TRACEPULSE_BLE_SERVICE_UUID", cls.ble_service_uuid),
@@ -54,6 +66,7 @@ class Config:
             local_status_only=_env_bool("TRACEPULSE_LOCAL_STATUS_ONLY", cls.local_status_only),
             calibration_mode=_env_bool("TRACEPULSE_CALIBRATION_MODE", cls.calibration_mode),
             allow_insecure_local=_env_bool("TRACEPULSE_ALLOW_INSECURE_LOCAL", cls.allow_insecure_local),
+            lock_operations_enabled=_env_bool("TRACEPULSE_LOCK_OPERATIONS_ENABLED", _default_lock_operations_enabled()),
             testing=testing,
         )
 

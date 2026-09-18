@@ -9,15 +9,20 @@ class DatabaseError(RuntimeError): pass
 
 @dataclass(frozen=True)
 class DatabaseConfig: path:Path; busy_timeout_ms:int=5000
+def _restrict_permissions(path: Path) -> None:
+    if os.name != "nt":
+        os.chmod(path, 0o700 if path.is_dir() else 0o600)
+
+
 class Database:
     def __init__(self,config): self.path=Path(config.path).expanduser().resolve(); self.timeout=config.busy_timeout_ms; self.lock=threading.RLock(); self.connection=None
     def open(self):
         with self.lock:
             if self.connection: return
-            self.path.parent.mkdir(parents=True,exist_ok=True); os.chmod(self.path.parent,0o700)
+            self.path.parent.mkdir(parents=True,exist_ok=True); _restrict_permissions(self.path.parent)
             self.connection=sqlite3.connect(self.path,timeout=self.timeout/1000,isolation_level=None,check_same_thread=False); self.connection.row_factory=sqlite3.Row
             for pragma in ("PRAGMA foreign_keys=ON","PRAGMA journal_mode=WAL","PRAGMA synchronous=FULL","PRAGMA secure_delete=ON",f"PRAGMA busy_timeout={self.timeout}"): self.connection.execute(pragma)
-            os.chmod(self.path,0o600)
+            _restrict_permissions(self.path)
     def close(self):
         with self.lock:
             if self.connection: self.connection.close(); self.connection=None

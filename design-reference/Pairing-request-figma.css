@@ -1,0 +1,807 @@
+/* 03 · Pairing request */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 32px;
+gap: 16px;
+isolation: isolate;
+
+position: relative;
+width: 1440px;
+height: 900px;
+
+background: #080A0D;
+
+
+/* Background / neon circuit grid */
+
+position: absolute;
+width: 1440px;
+height: 900px;
+left: 0px;
+top: 0px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+z-index: 0;
+
+
+/* Vector */
+
+position: absolute;
+left: 42.36%;
+right: -28.47%;
+top: -40%;
+bottom: 33.33%;
+
+background: radial-gradient(50% 50% at 50% 50%, rgba(255, 117, 31, 0.2) 0%, rgba(255, 117, 31, 0) 100%);
+
+
+/* Vector */
+
+position: absolute;
+left: -38.89%;
+right: 38.89%;
+top: 54.44%;
+bottom: -34.44%;
+
+background: radial-gradient(50% 50% at 50% 50%, rgba(255, 117, 31, 0.2) 0%, rgba(255, 117, 31, 0) 100%);
+
+
+/* Vector */
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 0%;
+bottom: 0%;
+
+background: #000000;
+border: 1px solid rgba(140, 96, 73, 0.09);
+
+
+/* Vector */
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 15.33%;
+bottom: 0%;
+
+border: 1px solid rgba(255, 117, 31, 0.28);
+
+
+/* Vector */
+
+position: absolute;
+left: 1.81%;
+right: 1.81%;
+top: 2.89%;
+bottom: 2.89%;
+
+border: 1px solid rgba(255, 117, 31, 0.55);
+
+
+/* Group */
+
+position: absolute;
+left: 34.51%;
+right: 23.4%;
+top: 27.22%;
+bottom: 25.22%;
+
+opacity: 0.65;
+
+
+/* Vector */
+
+position: absolute;
+left: 34.51%;
+right: 65.07%;
+top: 68.56%;
+bottom: 30.78%;
+
+background: #FF751F;
+
+
+/* Vector */
+
+position: absolute;
+left: 38.68%;
+right: 60.9%;
+top: 71.22%;
+bottom: 28.11%;
+
+background: #FF751F;
+
+
+/* Vector */
+
+position: absolute;
+left: 67.15%;
+right: 32.43%;
+top: 27.22%;
+bottom: 72.11%;
+
+background: #FF751F;
+
+
+/* Vector */
+
+position: absolute;
+left: 76.18%;
+right: 23.4%;
+top: 74.11%;
+bottom: 25.22%;
+
+background: #FF751F;
+
+
+/* Request / topbar */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: flex-start;
+padding: 0px;
+gap: 12px;
+
+width: 1376px;
+height: 56px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+z-index: 1;
+
+
+/* TRACEPULSE */
+
+width: 192px;
+height: 32px;
+
+/* TracePulse/Brand */
+font-family: 'Orbitron';
+font-style: normal;
+font-weight: 700;
+font-size: 24px;
+line-height: 32px;
+/* identical to box height, or 133% */
+
+color: #FF751F;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 02 / VERIFY DEVICE */
+
+width: 112px;
+height: 20px;
+
+/* TracePulse/Caption */
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 400;
+font-size: 13px;
+line-height: 20px;
+/* identical to box height, or 154% */
+
+color: #A5ADB8;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Request / layout */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 24px;
+gap: 24px;
+
+width: 1376px;
+height: 720px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+flex-grow: 0;
+z-index: 2;
+
+
+/* Request / identity */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: flex-start;
+padding: 24px;
+gap: 16px;
+
+width: 500px;
+height: 590px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* TRUST STARTS HERE */
+
+width: 148px;
+height: 22px;
+
+/* TracePulse/Label */
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 600;
+font-size: 15px;
+line-height: 22px;
+/* identical to box height, or 147% */
+
+color: #FF751F;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* One connection.
+Only your devices. */
+
+width: 452px;
+height: 112px;
+
+/* TracePulse/Display */
+font-family: 'Rajdhani';
+font-style: normal;
+font-weight: 600;
+font-size: 48px;
+line-height: 56px;
+/* or 117% */
+
+color: #F5F6F8;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* A phone is requesting access to this laptop. Confirm th */
+
+width: 452px;
+height: 72px;
+
+/* TracePulse/Body */
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 400;
+font-size: 16px;
+line-height: 24px;
+/* or 150% */
+
+color: #A5ADB8;
+
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+
+/* DEVICE FINGERPRINT VERIFICATION */
+
+width: 210px;
+height: 20px;
+
+/* TracePulse/Caption */
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 400;
+font-size: 13px;
+line-height: 20px;
+/* identical to box height, or 154% */
+
+color: #FF751F;
+
+
+/* Inside auto layout */
+flex: none;
+order: 3;
+flex-grow: 0;
+
+
+/* Trusted connection / radar */
+
+width: 190px;
+height: 190px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 4;
+flex-grow: 0;
+
+
+/* Vector */
+
+position: absolute;
+left: 0.71%;
+right: 0.71%;
+top: 0.71%;
+bottom: 0.71%;
+
+background: radial-gradient(50% 50% at 50% 50%, rgba(255, 117, 31, 0.15) 0%, rgba(255, 117, 31, 0) 100%);
+
+
+/* Vector */
+
+position: absolute;
+left: 1.43%;
+right: 1.43%;
+top: 1.43%;
+bottom: 1.43%;
+
+background: #000000;
+border: 1px solid rgba(255, 117, 31, 0.15);
+
+
+/* Vector */
+
+position: absolute;
+left: 8.57%;
+right: 8.57%;
+top: 8.57%;
+bottom: 8.57%;
+
+border: 2px solid #FF751F;
+
+
+/* Vector */
+
+position: absolute;
+left: 15.71%;
+right: 15.71%;
+top: 15.71%;
+bottom: 15.71%;
+
+border: 1px solid rgba(255, 117, 31, 0.35);
+
+
+/* Vector */
+
+position: absolute;
+left: 25%;
+right: 25%;
+top: 25%;
+bottom: 25%;
+
+border: 1px solid rgba(255, 117, 31, 0.15);
+
+
+/* Vector */
+
+position: absolute;
+left: 32.86%;
+right: 35%;
+top: 40%;
+bottom: 40.71%;
+
+background: #101419;
+border: 2px solid #F5F6F8;
+
+
+/* Vector */
+
+position: absolute;
+left: 77.5%;
+right: 16.07%;
+top: 26.07%;
+bottom: 67.5%;
+
+background: #58E4A0;
+
+
+/* Vector */
+
+position: absolute;
+left: 50%;
+right: 19.29%;
+top: 29.29%;
+bottom: 50%;
+
+background: #000000;
+border: 1px dashed #58E4A0;
+
+
+/* Vector */
+
+position: absolute;
+left: 48.57%;
+right: 48.57%;
+top: 7.14%;
+bottom: 90%;
+
+background: #FF751F;
+
+
+/* Request / approval panel */
+
+box-sizing: border-box;
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 24px;
+gap: 16px;
+
+width: 560px;
+height: 590px;
+
+background: #101419;
+border: 1px solid #30343C;
+border-radius: 12px;
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Pairing request */
+
+width: 200px;
+height: 40px;
+
+/* TracePulse/Heading */
+font-family: 'Rajdhani';
+font-style: normal;
+font-weight: 600;
+font-size: 32px;
+line-height: 40px;
+/* identical to box height, or 125% */
+
+color: #F5F6F8;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Verify this device before continuing. */
+
+width: 264px;
+height: 24px;
+
+/* TracePulse/Body */
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 400;
+font-size: 16px;
+line-height: 24px;
+/* identical to box height, or 150% */
+
+color: #A5ADB8;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Request / phone details */
+
+box-sizing: border-box;
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 16px;
+gap: 8px;
+
+width: 512px;
+height: 186px;
+
+background: #171D24;
+border: 1px solid #30343C;
+border-radius: 12px;
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+
+/* TracePulse Phone */
+
+width: 158px;
+height: 28px;
+
+/* TracePulse/Subheading */
+font-family: 'Rajdhani';
+font-style: normal;
+font-weight: 600;
+font-size: 22px;
+line-height: 28px;
+/* identical to box height, or 127% */
+
+color: #F5F6F8;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Android 13  ·  Chrome Mobile */
+
+width: 204px;
+height: 24px;
+
+/* TracePulse/Body */
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 400;
+font-size: 16px;
+line-height: 24px;
+/* identical to box height, or 150% */
+
+color: #A5ADB8;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* IP address      192.168.0.135
+MAC address  ca:82:b3:94: */
+
+width: 480px;
+height: 48px;
+
+/* TracePulse/Body */
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 400;
+font-size: 16px;
+line-height: 24px;
+/* or 150% */
+
+color: #A5ADB8;
+
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+
+/* Request / actions */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: flex-start;
+padding: 0px;
+gap: 12px;
+
+width: 512px;
+height: 48px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 3;
+flex-grow: 0;
+
+
+/* TracePulse / Control
+
+Primary and secondary actions, navigation and two-line status cards. Edit Label and Detail; status reveals Detail.
+
+TracePulse reusable action and status control.
+*/
+
+box-sizing: border-box;
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+padding: 8px 16px;
+gap: 8px;
+
+width: 304px;
+height: 48px;
+
+background: #FF751F;
+border: 1px solid #FF751F;
+/* TracePulse/Orange glow */
+box-shadow: 0px 0px 24px rgba(255, 89, 10, 0.22);
+border-radius: 12px;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* label */
+
+width: 125px;
+height: 22px;
+
+/* TracePulse/Label */
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 600;
+font-size: 15px;
+line-height: 22px;
+/* identical to box height, or 147% */
+
+color: #080A0D;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* detail */
+
+display: none;
+width: 0px;
+height: 28px;
+
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* TracePulse / Control
+
+Primary and secondary actions, navigation and two-line status cards. Edit Label and Detail; status reveals Detail.
+
+TracePulse reusable action and status control.
+*/
+
+box-sizing: border-box;
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+padding: 8px 16px;
+gap: 8px;
+
+width: 196px;
+height: 48px;
+
+background: #101419;
+border: 1px solid #30343C;
+border-radius: 12px;
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* label */
+
+width: 47px;
+height: 22px;
+
+/* TracePulse/Label */
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 600;
+font-size: 15px;
+line-height: 22px;
+/* identical to box height, or 147% */
+
+color: #F5F6F8;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* detail */
+
+display: none;
+width: 0px;
+height: 28px;
+
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Only approve devices you recognise. This phone will be  */
+
+width: 512px;
+height: 40px;
+
+/* TracePulse/Caption */
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 400;
+font-size: 13px;
+line-height: 20px;
+/* or 154% */
+
+color: #A5ADB8;
+
+
+/* Inside auto layout */
+flex: none;
+order: 4;
+flex-grow: 0;
+
+
+/* ✓  TLS 1.3 encrypted connection
+✓  Device fingerprint v */
+
+width: 512px;
+height: 48px;
+
+/* TracePulse/Body */
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 400;
+font-size: 16px;
+line-height: 24px;
+/* or 150% */
+
+color: #58E4A0;
+
+
+/* Inside auto layout */
+flex: none;
+order: 5;
+flex-grow: 0;
