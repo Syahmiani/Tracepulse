@@ -4,7 +4,16 @@ import {base64UrlDecode,base64UrlEncode,createX25519KeyPair,deriveSessionKey,der
 
 const serviceOrigin=import.meta.env.VITE_SERVICE_URL||`https://${location.hostname}:8443`;
 
-function StartMetric({label,value,icon}){return <div className="start-metric"><span className="start-icon">{icon}</span><span className="start-label">{label}</span><strong>{value}</strong></div>;}
+function StartupScreen(){return <main className="startup-screen">
+    <div className="startup-circuit" aria-hidden="true"/>
+    <header className="startup-topbar"><strong>TRACEPULSE</strong><span>DESKTOP AGENT&nbsp; / &nbsp;v1.0.0</span></header>
+    <section className="startup-main" aria-label="TracePulse is starting">
+        <div className="startup-radar" aria-hidden="true"><i className="startup-ring startup-ring-outer"/><i className="startup-ring startup-ring-middle"/><i className="startup-ring startup-ring-inner"/><svg viewBox="0 0 32 32" role="img" aria-label="Security shield"><path d="M16 3 26 7v7c0 6.6-4.1 12-10 15-5.9-3-10-8.4-10-15V7l10-4Z"/><path d="m11 16 3.2 3.2L21.5 12"/></svg></div>
+        <h1>TRACEPULSE</h1><strong className="startup-tagline">YOUR DEVICE. OUR PROTECTION.</strong>
+        <p>Intelligent proximity. Uncompromising security.</p>
+        <div className="startup-progress" aria-label="Initializing security modules"><span>INITIALIZING SECURITY MODULES…</span><div><i/></div></div>
+    </section>
+</main>;}
 
 export default function PairingScreen({onPaired,phoneMode=false}){
     useEffect(()=>{if(phoneMode)localStorage.setItem("tracepulse.role","phone");else localStorage.setItem("tracepulse.role","laptop");},[phoneMode]);
@@ -111,11 +120,16 @@ export default function PairingScreen({onPaired,phoneMode=false}){
         }catch(exception){setError(exception.message||"laptop approval failed");setBusy(false);}
     };
 
-    if(!showStart)return <main className="tracepulse-splash"><div className="tracepulse-wordmark">TRACEPULSE</div></main>;
+    if(!showStart)return <StartupScreen/>;
     if(scanned)return <main className="start-shell phone-pair-shell"><section className="start-panel pair-progress"><p className="start-eyebrow">TRACEPULSE // SECURE LINK</p><h1>PAIR WITH THIS LAPTOP?</h1><p>Confirm to establish the encrypted TracePulse phone executor link.</p>{!phoneConfirmed?<button className="pair-confirm-button" disabled={busy} onClick={()=>{setPhoneConfirmed(true);pair();}}>{busy?"PAIRING…":"ACCEPT PAIRING"}</button>:<><div className="scan-pulse">◉</div><p>Phone accepted. Waiting for laptop confirmation before opening the dashboard.</p></>}{error&&<p className="start-error">{error}</p>}</section></main>;
     if(laptopPending)return <main className="start-shell phone-pair-shell"><section className="start-panel pair-progress"><p className="start-eyebrow">TRACEPULSE // LAPTOP APPROVAL</p><h1>PHONE PAIRING REQUEST</h1><p>A phone has accepted the QR pairing request. Confirm this trusted device on the laptop.</p><button className="pair-confirm-button" disabled={busy} onClick={acceptOnLaptop}>{busy?"APPROVING…":"ACCEPT PAIRING"}</button></section></main>;
     if(phoneMode)return <main className="start-shell phone-pair-shell"><section className="start-panel pair-progress"><p className="start-eyebrow">TRACEPULSE // PHONE EXECUTOR</p><h1>READY TO SCAN</h1><p>TracePulse was unpaired. Scan the new QR code displayed on the laptop to pair again.</p><div className="scan-pulse">◉</div></section></main>;
-    return <main className="start-shell">
-        <section className="qr-only-screen"><p className="start-eyebrow">TRACEPULSE // SECURE PAIRING</p><h1>SCAN TO CONNECT</h1>{qr?<img className="start-qr" src={qr} alt="TracePulse phone pairing QR code"/>:<div className="qr-placeholder">GENERATING QR</div>}<p>Scan this QR code with the phone camera.</p><span className="qr-badge">ONE-TIME ENCRYPTED LINK</span>{error&&<p className="start-error">{error}</p>}</section>
+    return <main className="pairing-screen">
+        <div className="pairing-circuit" aria-hidden="true"/>
+        <header className="pairing-topbar"><strong>TRACEPULSE</strong><span>01&nbsp; / &nbsp;CONNECT YOUR PHONE</span></header>
+        <section className="pairing-content">
+            <article className="pairing-instructions"><p>SECURE LINK / SETUP</p><h1>Your phone is<br/>your security key.</h1><div className="pairing-copy">Pair once. Stay protected wherever you work. Your laptop monitors the trusted connection while your phone stays close.</div><ol><li>Scan the QR code with your phone</li><li>Review and accept the pairing request</li><li>Keep your phone nearby to stay unlocked</li></ol><aside><strong>ENCRYPTED BY DESIGN</strong><span>One-time link · TLS 1.3 secure channel</span></aside></article>
+            <article className="pairing-qr-panel"><h2>SECURE PAIRING</h2><p>Scan with your phone camera</p>{qr?<img className="pairing-qr" src={qr} alt="TracePulse phone pairing QR code"/>:<div className="pairing-qr-placeholder" aria-live="polite">GENERATING SECURE QR…</div>}<strong className="pairing-qr-status">{qr?"ONE-TIME ENCRYPTED LINK":"PREPARING ONE-TIME LINK"}</strong>{error&&<p className="pairing-error">{error}</p>}</article>
+        </section>
     </main>;
 }

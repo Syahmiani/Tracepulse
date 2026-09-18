@@ -92,14 +92,14 @@ export default function App() {
         }
     };
 
-    return <>
-        <nav className="view-switcher">
-            <button onClick={() => setView("laptop")}>Laptop</button>
-            {socket && <button onClick={() => setView("mobile")}>Mobile</button>}
-        </nav>
+    if (view === "mobile" && socket) return <>
+        <nav className="view-switcher"><button onClick={() => setView("laptop")}>Laptop</button></nav>
         {error && <div className="global-error">{error}</div>}
-        {view === "mobile" && socket
-            ? <MobileDashboard session={session} socket={socket} onUnpair={unpair}/>
-            : <LaptopDashboard session={session} socket={socket} onUnpair={unpair}/>}
+        <MobileDashboard session={session} socket={socket} onUnpair={unpair}/>
+    </>;
+
+    return <>
+        {error && <div className="global-error">{error}</div>}
+        <LaptopDashboard session={session} socket={socket} onUnpair={unpair} onShowMobile={socket ? () => setView("mobile") : null}/>
     </>;
 }

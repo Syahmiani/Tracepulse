@@ -1,0 +1,2103 @@
+04-security-dashboard.css
+
+/* 04 · Security dashboard */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: flex-start;
+padding: 24px 24px 24px 16px;
+gap: 20px;
+isolation: isolate;
+
+position: relative;
+width: 1440px;
+height: 900px;
+
+background: #080A0D;
+
+
+/* Background / neon circuit grid */
+
+position: absolute;
+width: 1440px;
+height: 900px;
+left: 0px;
+top: 0px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+z-index: 0;
+
+
+/* Vector */
+
+position: absolute;
+left: 42.36%;
+right: -28.47%;
+top: -40%;
+bottom: 33.33%;
+
+background: radial-gradient(50% 50% at 50% 50%, rgba(255, 117, 31, 0.2) 0%, rgba(255, 117, 31, 0) 100%);
+
+
+/* Vector */
+
+position: absolute;
+left: -38.89%;
+right: 38.89%;
+top: 54.44%;
+bottom: -34.44%;
+
+background: radial-gradient(50% 50% at 50% 50%, rgba(255, 117, 31, 0.2) 0%, rgba(255, 117, 31, 0) 100%);
+
+
+/* Vector */
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 0%;
+bottom: 0%;
+
+background: #000000;
+border: 1px solid rgba(140, 96, 73, 0.09);
+
+
+/* Vector */
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 15.33%;
+bottom: 0%;
+
+border: 1px solid rgba(255, 117, 31, 0.28);
+
+
+/* Vector */
+
+position: absolute;
+left: 1.81%;
+right: 1.81%;
+top: 2.89%;
+bottom: 2.89%;
+
+border: 1px solid rgba(255, 117, 31, 0.55);
+
+
+/* Group */
+
+position: absolute;
+left: 34.51%;
+right: 23.4%;
+top: 27.22%;
+bottom: 25.22%;
+
+opacity: 0.65;
+
+
+/* Vector */
+
+position: absolute;
+left: 34.51%;
+right: 65.07%;
+top: 68.56%;
+bottom: 30.78%;
+
+background: #FF751F;
+
+
+/* Vector */
+
+position: absolute;
+left: 38.68%;
+right: 60.9%;
+top: 71.22%;
+bottom: 28.11%;
+
+background: #FF751F;
+
+
+/* Vector */
+
+position: absolute;
+left: 67.15%;
+right: 32.43%;
+top: 27.22%;
+bottom: 72.11%;
+
+background: #FF751F;
+
+
+/* Vector */
+
+position: absolute;
+left: 76.18%;
+right: 23.4%;
+top: 74.11%;
+bottom: 25.22%;
+
+background: #FF751F;
+
+
+/* Dashboard / sidebar */
+
+box-sizing: border-box;
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 16px;
+gap: 12px;
+isolation: isolate;
+
+width: 216px;
+height: 852px;
+
+background: #101419;
+border: 1px solid #30343C;
+border-radius: 12px;
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+z-index: 1;
+
+
+/* TRACEPULSE */
+
+width: 144px;
+height: 32px;
+
+font-family: 'Orbitron';
+font-style: normal;
+font-weight: 700;
+font-size: 18px;
+line-height: 32px;
+/* identical to box height, or 178% */
+
+color: #FF751F;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+z-index: 0;
+
+
+/* SECURITY WORKSPACE */
+
+width: 139px;
+height: 20px;
+
+/* TracePulse/Caption */
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 400;
+font-size: 13px;
+line-height: 20px;
+/* identical to box height, or 154% */
+
+color: #A5ADB8;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+z-index: 1;
+
+
+/* Sidebar / navigation */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+gap: 8px;
+
+width: 184px;
+height: 314px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+flex-grow: 0;
+z-index: 2;
+
+
+/* TracePulse / Control
+
+Primary and secondary actions, navigation and two-line status cards. Edit Label and Detail; status reveals Detail.
+
+TracePulse reusable action and status control.
+*/
+
+box-sizing: border-box;
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+padding: 8px 16px;
+gap: 8px;
+
+width: 184px;
+height: 48px;
+
+background: #FF751F;
+border: 1px solid #FF751F;
+border-radius: 12px;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* label */
+
+width: 101px;
+height: 22px;
+
+/* TracePulse/Label */
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 600;
+font-size: 15px;
+line-height: 22px;
+/* identical to box height, or 147% */
+
+color: #080A0D;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* detail */
+
+display: none;
+width: 0px;
+height: 28px;
+
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* TracePulse / Control
+
+Primary and secondary actions, navigation and two-line status cards. Edit Label and Detail; status reveals Detail.
+
+TracePulse reusable action and status control.
+*/
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: flex-start;
+padding: 8px 16px;
+gap: 8px;
+
+width: 184px;
+height: 48px;
+
+border-radius: 12px;
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* label */
+
+width: 75px;
+height: 22px;
+
+/* TracePulse/Label */
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 600;
+font-size: 15px;
+line-height: 22px;
+/* identical to box height, or 147% */
+
+color: #F5F6F8;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* detail */
+
+display: none;
+width: 0px;
+height: 28px;
+
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* TracePulse / Control
+
+Primary and secondary actions, navigation and two-line status cards. Edit Label and Detail; status reveals Detail.
+
+TracePulse reusable action and status control.
+*/
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: flex-start;
+padding: 8px 16px;
+gap: 8px;
+
+width: 184px;
+height: 48px;
+
+border-radius: 12px;
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+
+/* label */
+
+width: 88px;
+height: 22px;
+
+/* TracePulse/Label */
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 600;
+font-size: 15px;
+line-height: 22px;
+/* identical to box height, or 147% */
+
+color: #F5F6F8;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* detail */
+
+display: none;
+width: 0px;
+height: 28px;
+
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* TracePulse / Control
+
+Primary and secondary actions, navigation and two-line status cards. Edit Label and Detail; status reveals Detail.
+
+TracePulse reusable action and status control.
+*/
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: flex-start;
+padding: 8px 16px;
+gap: 8px;
+
+width: 184px;
+height: 48px;
+
+border-radius: 12px;
+
+/* Inside auto layout */
+flex: none;
+order: 3;
+flex-grow: 0;
+
+
+/* label */
+
+width: 109px;
+height: 22px;
+
+/* TracePulse/Label */
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 600;
+font-size: 15px;
+line-height: 22px;
+/* identical to box height, or 147% */
+
+color: #F5F6F8;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* detail */
+
+display: none;
+width: 0px;
+height: 28px;
+
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* TracePulse / Control
+
+Primary and secondary actions, navigation and two-line status cards. Edit Label and Detail; status reveals Detail.
+
+TracePulse reusable action and status control.
+*/
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: flex-start;
+padding: 8px 16px;
+gap: 8px;
+
+width: 184px;
+height: 48px;
+
+border-radius: 12px;
+
+/* Inside auto layout */
+flex: none;
+order: 4;
+flex-grow: 0;
+
+
+/* label */
+
+width: 82px;
+height: 22px;
+
+/* TracePulse/Label */
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 600;
+font-size: 15px;
+line-height: 22px;
+/* identical to box height, or 147% */
+
+color: #F5F6F8;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* detail */
+
+display: none;
+width: 0px;
+height: 28px;
+
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Sidebar / protection */
+
+box-sizing: border-box;
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 16px;
+gap: 8px;
+
+position: absolute;
+width: 184px;
+height: 140px;
+left: 16px;
+top: 688px;
+
+background: #171D24;
+border: 1px solid #30343C;
+border-radius: 12px;
+
+/* Inside auto layout */
+flex: none;
+order: 3;
+flex-grow: 0;
+z-index: 3;
+
+
+/* ●  PROTECTED */
+
+width: 106px;
+height: 22px;
+
+/* TracePulse/Label */
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 600;
+font-size: 15px;
+line-height: 22px;
+/* identical to box height, or 147% */
+
+color: #58E4A0;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Agent v1.0.0 */
+
+width: 73px;
+height: 20px;
+
+/* TracePulse/Caption */
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 400;
+font-size: 13px;
+line-height: 20px;
+/* identical to box height, or 154% */
+
+color: #A5ADB8;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Demo environment */
+
+width: 114px;
+height: 20px;
+
+/* TracePulse/Caption */
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 400;
+font-size: 13px;
+line-height: 20px;
+/* identical to box height, or 154% */
+
+color: #A5ADB8;
+
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+
+/* Dashboard / main */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+gap: 16px;
+
+width: 1164px;
+height: 852px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+flex-grow: 0;
+z-index: 2;
+
+
+/* Dashboard / header */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: space-between;
+align-items: center;
+padding: 0px;
+gap: 16px;
+
+width: 1164px;
+height: 74px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Dashboard / heading */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+gap: 4px;
+
+width: 890px;
+height: 70px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Security Operations Console */
+
+width: 368px;
+height: 40px;
+
+/* TracePulse/Heading */
+font-family: 'Rajdhani';
+font-style: normal;
+font-weight: 600;
+font-size: 32px;
+line-height: 40px;
+/* identical to box height, or 125% */
+
+color: #F5F6F8;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Your workspace, protected. Monitor proximity and truste */
+
+width: 577px;
+height: 24px;
+
+/* TracePulse/Body */
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 400;
+font-size: 16px;
+line-height: 24px;
+/* identical to box height, or 150% */
+
+color: #A5ADB8;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* TracePulse / Control
+
+Primary and secondary actions, navigation and two-line status cards. Edit Label and Detail; status reveals Detail.
+
+TracePulse reusable action and status control.
+*/
+
+box-sizing: border-box;
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+padding: 8px 16px;
+gap: 8px;
+
+width: 250px;
+height: 48px;
+
+background: #101419;
+border: 1px solid #30343C;
+border-radius: 12px;
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* label */
+
+width: 124px;
+height: 22px;
+
+/* TracePulse/Label */
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 600;
+font-size: 15px;
+line-height: 22px;
+/* identical to box height, or 147% */
+
+color: #58E4A0;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* detail */
+
+display: none;
+width: 0px;
+height: 28px;
+
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Dashboard / status row */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: flex-start;
+padding: 0px;
+gap: 12px;
+
+width: 1164px;
+height: 100px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* TracePulse / Control
+
+Primary and secondary actions, navigation and two-line status cards. Edit Label and Detail; status reveals Detail.
+
+TracePulse reusable action and status control.
+*/
+
+box-sizing: border-box;
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: flex-start;
+padding: 8px 16px;
+gap: 8px;
+
+width: 282px;
+height: 100px;
+
+background: #101419;
+border: 1px solid #30343C;
+border-radius: 12px;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* label */
+
+width: 100px;
+height: 22px;
+
+/* TracePulse/Label */
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 600;
+font-size: 15px;
+line-height: 22px;
+/* identical to box height, or 147% */
+
+color: #A5ADB8;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* detail */
+
+width: 94px;
+height: 28px;
+
+/* TracePulse/Subheading */
+font-family: 'Rajdhani';
+font-style: normal;
+font-weight: 600;
+font-size: 22px;
+line-height: 28px;
+/* identical to box height, or 127% */
+
+color: #58E4A0;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* TracePulse / Control
+
+Primary and secondary actions, navigation and two-line status cards. Edit Label and Detail; status reveals Detail.
+
+TracePulse reusable action and status control.
+*/
+
+box-sizing: border-box;
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: flex-start;
+padding: 8px 16px;
+gap: 8px;
+
+width: 282px;
+height: 100px;
+
+background: #101419;
+border: 1px solid #30343C;
+border-radius: 12px;
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* label */
+
+width: 131px;
+height: 22px;
+
+/* TracePulse/Label */
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 600;
+font-size: 15px;
+line-height: 22px;
+/* identical to box height, or 147% */
+
+color: #A5ADB8;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* detail */
+
+width: 105px;
+height: 28px;
+
+/* TracePulse/Subheading */
+font-family: 'Rajdhani';
+font-style: normal;
+font-weight: 600;
+font-size: 22px;
+line-height: 28px;
+/* identical to box height, or 127% */
+
+color: #58E4A0;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* TracePulse / Control
+
+Primary and secondary actions, navigation and two-line status cards. Edit Label and Detail; status reveals Detail.
+
+TracePulse reusable action and status control.
+*/
+
+box-sizing: border-box;
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: flex-start;
+padding: 8px 16px;
+gap: 8px;
+
+width: 282px;
+height: 100px;
+
+background: #101419;
+border: 1px solid #30343C;
+border-radius: 12px;
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+
+/* label */
+
+width: 68px;
+height: 22px;
+
+/* TracePulse/Label */
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 600;
+font-size: 15px;
+line-height: 22px;
+/* identical to box height, or 147% */
+
+color: #A5ADB8;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* detail */
+
+width: 109px;
+height: 28px;
+
+/* TracePulse/Subheading */
+font-family: 'Rajdhani';
+font-style: normal;
+font-weight: 600;
+font-size: 22px;
+line-height: 28px;
+/* identical to box height, or 127% */
+
+color: #58E4A0;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* TracePulse / Control
+
+Primary and secondary actions, navigation and two-line status cards. Edit Label and Detail; status reveals Detail.
+
+TracePulse reusable action and status control.
+*/
+
+box-sizing: border-box;
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: flex-start;
+padding: 8px 16px;
+gap: 8px;
+
+width: 282px;
+height: 100px;
+
+background: #101419;
+border: 1px solid #30343C;
+border-radius: 12px;
+
+/* Inside auto layout */
+flex: none;
+order: 3;
+flex-grow: 0;
+
+
+/* label */
+
+width: 73px;
+height: 22px;
+
+/* TracePulse/Label */
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 600;
+font-size: 15px;
+line-height: 22px;
+/* identical to box height, or 147% */
+
+color: #A5ADB8;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* detail */
+
+width: 132px;
+height: 28px;
+
+/* TracePulse/Subheading */
+font-family: 'Rajdhani';
+font-style: normal;
+font-weight: 600;
+font-size: 22px;
+line-height: 28px;
+/* identical to box height, or 127% */
+
+color: #58E4A0;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Dashboard / monitoring row */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: flex-start;
+padding: 0px;
+gap: 16px;
+
+width: 1164px;
+height: 340px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+
+/* Proximity guard */
+
+box-sizing: border-box;
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 24px;
+gap: 12px;
+
+width: 748px;
+height: 340px;
+
+background: #101419;
+border: 1px solid #30343C;
+border-radius: 12px;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Proximity Guard */
+
+width: 144px;
+height: 28px;
+
+/* TracePulse/Subheading */
+font-family: 'Rajdhani';
+font-style: normal;
+font-weight: 600;
+font-size: 22px;
+line-height: 28px;
+/* identical to box height, or 127% */
+
+color: #F5F6F8;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Keep your phone within the configured security range. */
+
+width: 323px;
+height: 20px;
+
+/* TracePulse/Caption */
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 400;
+font-size: 13px;
+line-height: 20px;
+/* identical to box height, or 154% */
+
+color: #A5ADB8;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Proximity / radar and metrics */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: flex-start;
+padding: 0px;
+gap: 24px;
+
+width: 700px;
+height: 230px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+
+/* Proximity radar / 3.2 metres */
+
+width: 230px;
+height: 230px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Vector */
+
+position: absolute;
+left: 0.71%;
+right: 0.71%;
+top: 0.71%;
+bottom: 0.71%;
+
+background: radial-gradient(50% 50% at 50% 50%, rgba(255, 117, 31, 0.15) 0%, rgba(255, 117, 31, 0) 100%);
+
+
+/* Vector */
+
+position: absolute;
+left: 1.43%;
+right: 1.43%;
+top: 1.43%;
+bottom: 1.43%;
+
+background: #000000;
+border: 1px solid rgba(255, 117, 31, 0.15);
+
+
+/* Vector */
+
+position: absolute;
+left: 8.57%;
+right: 8.57%;
+top: 8.57%;
+bottom: 8.57%;
+
+border: 2px solid #FF751F;
+
+
+/* Vector */
+
+position: absolute;
+left: 15.71%;
+right: 15.71%;
+top: 15.71%;
+bottom: 15.71%;
+
+border: 1px solid rgba(255, 117, 31, 0.35);
+
+
+/* Vector */
+
+position: absolute;
+left: 25%;
+right: 25%;
+top: 25%;
+bottom: 25%;
+
+border: 1px solid rgba(255, 117, 31, 0.15);
+
+
+/* Vector */
+
+position: absolute;
+left: 32.86%;
+right: 35%;
+top: 40%;
+bottom: 40.71%;
+
+background: #101419;
+border: 2px solid #F5F6F8;
+
+
+/* Vector */
+
+position: absolute;
+left: 77.5%;
+right: 16.07%;
+top: 26.07%;
+bottom: 67.5%;
+
+background: #58E4A0;
+
+
+/* Vector */
+
+position: absolute;
+left: 50%;
+right: 19.29%;
+top: 29.29%;
+bottom: 50%;
+
+background: #000000;
+border: 1px dashed #58E4A0;
+
+
+/* Vector */
+
+position: absolute;
+left: 48.57%;
+right: 48.57%;
+top: 7.14%;
+bottom: 90%;
+
+background: #FF751F;
+
+
+/* Proximity / metrics */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 12px;
+gap: 12px;
+
+width: 430px;
+height: 230px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* ●  WITHIN SAFE ZONE */
+
+width: 155px;
+height: 22px;
+
+/* TracePulse/Label */
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 600;
+font-size: 15px;
+line-height: 22px;
+/* identical to box height, or 147% */
+
+color: #58E4A0;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Security boundary                 8 metres */
+
+width: 246px;
+height: 22px;
+
+/* TracePulse/Label */
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 600;
+font-size: 15px;
+line-height: 22px;
+/* identical to box height, or 147% */
+
+color: #F5F6F8;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Current distance                  3.2 metres */
+
+width: 252px;
+height: 22px;
+
+/* TracePulse/Label */
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 600;
+font-size: 15px;
+line-height: 22px;
+/* identical to box height, or 147% */
+
+color: #58E4A0;
+
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+
+/* Signal strength                    −54 dBm */
+
+width: 231px;
+height: 22px;
+
+/* TracePulse/Label */
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 600;
+font-size: 15px;
+line-height: 22px;
+/* identical to box height, or 147% */
+
+color: #F5F6F8;
+
+
+/* Inside auto layout */
+flex: none;
+order: 3;
+flex-grow: 0;
+
+
+/* Lock delay                             5 seconds */
+
+width: 235px;
+height: 22px;
+
+/* TracePulse/Label */
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 600;
+font-size: 15px;
+line-height: 22px;
+/* identical to box height, or 147% */
+
+color: #F5F6F8;
+
+
+/* Inside auto layout */
+flex: none;
+order: 4;
+flex-grow: 0;
+
+
+/* Connection                            TLS 1.3 */
+
+width: 217px;
+height: 22px;
+
+/* TracePulse/Label */
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 600;
+font-size: 15px;
+line-height: 22px;
+/* identical to box height, or 147% */
+
+color: #FF751F;
+
+
+/* Inside auto layout */
+flex: none;
+order: 5;
+flex-grow: 0;
+
+
+/* Relative proximity */
+
+box-sizing: border-box;
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 24px;
+gap: 8px;
+
+width: 400px;
+height: 340px;
+
+background: #101419;
+border: 1px solid #30343C;
+border-radius: 12px;
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Signal & proximity */
+
+width: 166px;
+height: 28px;
+
+/* TracePulse/Subheading */
+font-family: 'Rajdhani';
+font-style: normal;
+font-weight: 600;
+font-size: 22px;
+line-height: 28px;
+/* identical to box height, or 127% */
+
+color: #F5F6F8;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Relative range estimate · not GPS location */
+
+width: 250px;
+height: 20px;
+
+/* TracePulse/Caption */
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 400;
+font-size: 13px;
+line-height: 20px;
+/* identical to box height, or 154% */
+
+color: #A5ADB8;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Signal / visualization */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: center;
+padding: 0px;
+gap: 8px;
+
+width: 352px;
+height: 206px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+
+/* Paired phone / relative range */
+
+width: 164px;
+height: 164px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Vector */
+
+position: absolute;
+left: 0.71%;
+right: 0.71%;
+top: 0.71%;
+bottom: 0.71%;
+
+background: radial-gradient(50% 50% at 50% 50%, rgba(255, 117, 31, 0.15) 0%, rgba(255, 117, 31, 0) 100%);
+
+
+/* Vector */
+
+position: absolute;
+left: 1.43%;
+right: 1.43%;
+top: 1.43%;
+bottom: 1.43%;
+
+background: #000000;
+border: 1px solid rgba(255, 117, 31, 0.15);
+
+
+/* Vector */
+
+position: absolute;
+left: 8.57%;
+right: 8.57%;
+top: 8.57%;
+bottom: 8.57%;
+
+border: 2px solid #FF751F;
+
+
+/* Vector */
+
+position: absolute;
+left: 15.71%;
+right: 15.71%;
+top: 15.71%;
+bottom: 15.71%;
+
+border: 1px solid rgba(255, 117, 31, 0.35);
+
+
+/* Vector */
+
+position: absolute;
+left: 25%;
+right: 25%;
+top: 25%;
+bottom: 25%;
+
+border: 1px solid rgba(255, 117, 31, 0.15);
+
+
+/* Vector */
+
+position: absolute;
+left: 32.86%;
+right: 35%;
+top: 40%;
+bottom: 40.71%;
+
+background: #101419;
+border: 2px solid #F5F6F8;
+
+
+/* Vector */
+
+position: absolute;
+left: 77.5%;
+right: 16.07%;
+top: 26.07%;
+bottom: 67.5%;
+
+background: #58E4A0;
+
+
+/* Vector */
+
+position: absolute;
+left: 50%;
+right: 19.29%;
+top: 29.29%;
+bottom: 50%;
+
+background: #000000;
+border: 1px dashed #58E4A0;
+
+
+/* Vector */
+
+position: absolute;
+left: 48.57%;
+right: 48.57%;
+top: 7.14%;
+bottom: 90%;
+
+background: #FF751F;
+
+
+/* Laptop  ●   ———   ●  Paired phone */
+
+width: 201px;
+height: 20px;
+
+/* TracePulse/Caption */
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 400;
+font-size: 13px;
+line-height: 20px;
+/* identical to box height, or 154% */
+
+color: #A5ADB8;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Dashboard / details row */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: flex-start;
+padding: 0px;
+gap: 16px;
+
+width: 1164px;
+height: 268px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 3;
+flex-grow: 0;
+
+
+/* Recent events */
+
+box-sizing: border-box;
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 16px;
+gap: 12px;
+
+width: 448px;
+height: 268px;
+
+background: #101419;
+border: 1px solid #30343C;
+border-radius: 12px;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Recent events */
+
+width: 128px;
+height: 28px;
+
+/* TracePulse/Subheading */
+font-family: 'Rajdhani';
+font-style: normal;
+font-weight: 600;
+font-size: 22px;
+line-height: 28px;
+/* identical to box height, or 127% */
+
+color: #F5F6F8;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 14:32:05   Phone heartbeat received
+                    */
+
+width: 416px;
+height: 40px;
+
+/* TracePulse/Caption */
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 400;
+font-size: 13px;
+line-height: 20px;
+/* or 154% */
+
+color: #A5ADB8;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* 14:31:58   Device entered safe zone
+                    */
+
+width: 416px;
+height: 40px;
+
+/* TracePulse/Caption */
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 400;
+font-size: 13px;
+line-height: 20px;
+/* or 154% */
+
+color: #A5ADB8;
+
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+
+/* 14:30:42   Secure pairing established
+                  */
+
+width: 416px;
+height: 40px;
+
+/* TracePulse/Caption */
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 400;
+font-size: 13px;
+line-height: 20px;
+/* or 154% */
+
+color: #A5ADB8;
+
+
+/* Inside auto layout */
+flex: none;
+order: 3;
+flex-grow: 0;
+
+
+/* AI decision engine */
+
+box-sizing: border-box;
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 16px;
+gap: 12px;
+
+width: 350px;
+height: 268px;
+
+background: #101419;
+border: 1px solid #30343C;
+border-radius: 12px;
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* AI Decision Engine */
+
+width: 163px;
+height: 28px;
+
+/* TracePulse/Subheading */
+font-family: 'Rajdhani';
+font-style: normal;
+font-weight: 600;
+font-size: 22px;
+line-height: 28px;
+/* identical to box height, or 127% */
+
+color: #F5F6F8;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* ●  SAFE */
+
+width: 109px;
+height: 40px;
+
+/* TracePulse/Heading */
+font-family: 'Rajdhani';
+font-style: normal;
+font-weight: 600;
+font-size: 32px;
+line-height: 40px;
+/* identical to box height, or 125% */
+
+color: #58E4A0;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Phone is within the configured security perimeter. No a */
+
+width: 318px;
+height: 48px;
+
+/* TracePulse/Body */
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 400;
+font-size: 16px;
+line-height: 24px;
+/* or 150% */
+
+color: #A5ADB8;
+
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+
+/* PROXIMITY MODEL  /  KNN
+SIGNAL SMOOTHING  /  KALMAN */
+
+width: 318px;
+height: 40px;
+
+/* TracePulse/Caption */
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 400;
+font-size: 13px;
+line-height: 20px;
+/* or 154% */
+
+color: #FF751F;
+
+
+/* Inside auto layout */
+flex: none;
+order: 3;
+flex-grow: 0;
+
+
+/* System information */
+
+box-sizing: border-box;
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 16px;
+gap: 12px;
+
+width: 334px;
+height: 268px;
+
+background: #101419;
+border: 1px solid #30343C;
+border-radius: 12px;
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+
+/* System information */
+
+width: 180px;
+height: 28px;
+
+/* TracePulse/Subheading */
+font-family: 'Rajdhani';
+font-style: normal;
+font-weight: 600;
+font-size: 22px;
+line-height: 28px;
+/* identical to box height, or 127% */
+
+color: #F5F6F8;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Device       TracePulse Laptop
+OS              Windows  */
+
+width: 302px;
+height: 96px;
+
+/* TracePulse/Body */
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 400;
+font-size: 16px;
+line-height: 24px;
+/* or 150% */
+
+color: #A5ADB8;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* TracePulse / Control
+
+Primary and secondary actions, navigation and two-line status cards. Edit Label and Detail; status reveals Detail.
+
+TracePulse reusable action and status control.
+*/
+
+box-sizing: border-box;
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+padding: 8px 16px;
+gap: 8px;
+
+width: 302px;
+height: 48px;
+
+background: #101419;
+border: 1px solid #30343C;
+border-radius: 12px;
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+
+/* label */
+
+width: 104px;
+height: 22px;
+
+/* TracePulse/Label */
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 600;
+font-size: 15px;
+line-height: 22px;
+/* identical to box height, or 147% */
+
+color: #F5F6F8;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* detail */
+
+display: none;
+width: 0px;
+height: 28px;
+
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;

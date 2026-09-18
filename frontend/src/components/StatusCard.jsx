@@ -1,1 +1,6 @@
-export default function StatusCard({label,value,detail}){return <article className="panel"><small>{label}</small><strong>{value}</strong>{detail&&<span>{detail}</span>}</article>}
+export default function StatusCard({label, value, tone = "safe"}) {
+    return <article className={`dashboard-status-card dashboard-status-card--${tone}`}>
+        <span>{label}</span>
+        <strong>{value}</strong>
+    </article>;
+}

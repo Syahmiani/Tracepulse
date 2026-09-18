@@ -1,0 +1,684 @@
+/* 02 · Secure pairing */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 32px;
+gap: 16px;
+isolation: isolate;
+
+position: relative;
+width: 1440px;
+height: 900px;
+
+background: #080A0D;
+
+
+/* Background / neon circuit grid */
+
+position: absolute;
+width: 1440px;
+height: 900px;
+left: 0px;
+top: 0px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+z-index: 0;
+
+
+/* Vector */
+
+position: absolute;
+left: 42.36%;
+right: -28.47%;
+top: -40%;
+bottom: 33.33%;
+
+background: radial-gradient(50% 50% at 50% 50%, rgba(255, 117, 31, 0.2) 0%, rgba(255, 117, 31, 0) 100%);
+
+
+/* Vector */
+
+position: absolute;
+left: -38.89%;
+right: 38.89%;
+top: 54.44%;
+bottom: -34.44%;
+
+background: radial-gradient(50% 50% at 50% 50%, rgba(255, 117, 31, 0.2) 0%, rgba(255, 117, 31, 0) 100%);
+
+
+/* Vector */
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 0%;
+bottom: 0%;
+
+background: #000000;
+border: 1px solid rgba(140, 96, 73, 0.09);
+
+
+/* Vector */
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 15.33%;
+bottom: 0%;
+
+border: 1px solid rgba(255, 117, 31, 0.28);
+
+
+/* Vector */
+
+position: absolute;
+left: 1.81%;
+right: 1.81%;
+top: 2.89%;
+bottom: 2.89%;
+
+border: 1px solid rgba(255, 117, 31, 0.55);
+
+
+/* Group */
+
+position: absolute;
+left: 34.51%;
+right: 23.4%;
+top: 27.22%;
+bottom: 25.22%;
+
+opacity: 0.65;
+
+
+/* Vector */
+
+position: absolute;
+left: 34.51%;
+right: 65.07%;
+top: 68.56%;
+bottom: 30.78%;
+
+background: #FF751F;
+
+
+/* Vector */
+
+position: absolute;
+left: 38.68%;
+right: 60.9%;
+top: 71.22%;
+bottom: 28.11%;
+
+background: #FF751F;
+
+
+/* Vector */
+
+position: absolute;
+left: 67.15%;
+right: 32.43%;
+top: 27.22%;
+bottom: 72.11%;
+
+background: #FF751F;
+
+
+/* Vector */
+
+position: absolute;
+left: 76.18%;
+right: 23.4%;
+top: 74.11%;
+bottom: 25.22%;
+
+background: #FF751F;
+
+
+/* Pairing / topbar */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: flex-start;
+padding: 0px;
+gap: 12px;
+
+width: 1376px;
+height: 56px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+z-index: 1;
+
+
+/* TRACEPULSE */
+
+width: 192px;
+height: 32px;
+
+/* TracePulse/Brand */
+font-family: 'Orbitron';
+font-style: normal;
+font-weight: 700;
+font-size: 24px;
+line-height: 32px;
+/* identical to box height, or 133% */
+
+color: #FF751F;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 01 / CONNECT YOUR PHONE */
+
+width: 165px;
+height: 20px;
+
+/* TracePulse/Caption */
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 400;
+font-size: 13px;
+line-height: 20px;
+/* identical to box height, or 154% */
+
+color: #A5ADB8;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Pairing / content */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 24px;
+gap: 24px;
+
+width: 1376px;
+height: 720px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+flex-grow: 0;
+z-index: 2;
+
+
+/* Pairing / instructions */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: flex-start;
+padding: 24px;
+gap: 16px;
+
+width: 560px;
+height: 600px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* SECURE LINK / SETUP */
+
+width: 153px;
+height: 22px;
+
+/* TracePulse/Label */
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 600;
+font-size: 15px;
+line-height: 22px;
+/* identical to box height, or 147% */
+
+color: #FF751F;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Your phone is
+your security key. */
+
+width: 512px;
+height: 112px;
+
+/* TracePulse/Display */
+font-family: 'Rajdhani';
+font-style: normal;
+font-weight: 600;
+font-size: 48px;
+line-height: 56px;
+/* or 117% */
+
+color: #F5F6F8;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Pair once. Stay protected wherever you work. Your lapto */
+
+width: 490px;
+height: 72px;
+
+/* TracePulse/Body */
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 400;
+font-size: 16px;
+line-height: 24px;
+/* or 150% */
+
+color: #A5ADB8;
+
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+
+/* 01   Scan the QR code with your phone */
+
+width: 490px;
+height: 24px;
+
+/* TracePulse/Subheading */
+font-family: 'Rajdhani';
+font-style: normal;
+font-weight: 600;
+font-size: 22px;
+line-height: 28px;
+/* or 127% */
+
+color: #F5F6F8;
+
+
+/* Inside auto layout */
+flex: none;
+order: 3;
+flex-grow: 0;
+
+
+/* 02   Review and accept the pairing request */
+
+width: 490px;
+height: 24px;
+
+/* TracePulse/Subheading */
+font-family: 'Rajdhani';
+font-style: normal;
+font-weight: 600;
+font-size: 22px;
+line-height: 28px;
+/* or 127% */
+
+color: #F5F6F8;
+
+
+/* Inside auto layout */
+flex: none;
+order: 4;
+flex-grow: 0;
+
+
+/* 03   Keep your phone nearby to stay unlocked */
+
+width: 490px;
+height: 24px;
+
+/* TracePulse/Subheading */
+font-family: 'Rajdhani';
+font-style: normal;
+font-weight: 600;
+font-size: 22px;
+line-height: 28px;
+/* or 127% */
+
+color: #F5F6F8;
+
+
+/* Inside auto layout */
+flex: none;
+order: 5;
+flex-grow: 0;
+
+
+/* Pairing / trust note */
+
+box-sizing: border-box;
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 16px;
+gap: 8px;
+
+width: 512px;
+height: 80px;
+
+background: #171D24;
+border: 1px solid #30343C;
+border-radius: 12px;
+
+/* Inside auto layout */
+flex: none;
+order: 6;
+flex-grow: 0;
+
+
+/* ENCRYPTED BY DESIGN */
+
+width: 164px;
+height: 22px;
+
+/* TracePulse/Label */
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 600;
+font-size: 15px;
+line-height: 22px;
+/* identical to box height, or 147% */
+
+color: #FF751F;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* One-time link · TLS 1.3 secure channel */
+
+width: 223px;
+height: 20px;
+
+/* TracePulse/Caption */
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 400;
+font-size: 13px;
+line-height: 20px;
+/* identical to box height, or 154% */
+
+color: #A5ADB8;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Pairing / QR panel */
+
+box-sizing: border-box;
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+padding: 24px;
+gap: 16px;
+
+width: 500px;
+height: 600px;
+
+background: #101419;
+border: 1px solid #30343C;
+border-radius: 12px;
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* SECURE PAIRING */
+
+width: 213px;
+height: 40px;
+
+/* TracePulse/Heading */
+font-family: 'Rajdhani';
+font-style: normal;
+font-weight: 600;
+font-size: 32px;
+line-height: 40px;
+/* identical to box height, or 125% */
+
+color: #F5F6F8;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Scan with your phone camera */
+
+width: 217px;
+height: 24px;
+
+/* TracePulse/Body */
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 400;
+font-size: 16px;
+line-height: 24px;
+/* identical to box height, or 150% */
+
+color: #A5ADB8;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* QR / demo preview */
+
+box-sizing: border-box;
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+
+width: 302px;
+height: 302px;
+
+background: #F5F6F8;
+border: 1px solid #FF751F;
+border-radius: 12px;
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+
+/* QR / demonstration link */
+
+width: 300px;
+height: 300px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Vector */
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 0%;
+bottom: 0%;
+
+background: #FFFFFF;
+
+
+/* Vector */
+
+position: absolute;
+left: 10.81%;
+right: 10.81%;
+top: 10.81%;
+bottom: 10.81%;
+
+background: #080A0D;
+
+
+/* DEMO QR  ·  EXPIRES IN 04:52 */
+
+width: 237px;
+height: 20px;
+
+/* TracePulse/Caption */
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 400;
+font-size: 13px;
+line-height: 20px;
+/* identical to box height, or 154% */
+
+color: #FF751F;
+
+
+/* Inside auto layout */
+flex: none;
+order: 3;
+flex-grow: 0;
+
+
+/* TracePulse / Control
+
+Primary and secondary actions, navigation and two-line status cards. Edit Label and Detail; status reveals Detail.
+
+TracePulse reusable action and status control.
+*/
+
+box-sizing: border-box;
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+padding: 8px 16px;
+gap: 8px;
+
+width: 360px;
+height: 48px;
+
+background: #101419;
+border: 1px solid #30343C;
+border-radius: 12px;
+
+/* Inside auto layout */
+flex: none;
+order: 4;
+flex-grow: 0;
+
+
+/* label */
+
+width: 118px;
+height: 22px;
+
+/* TracePulse/Label */
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 600;
+font-size: 15px;
+line-height: 22px;
+/* identical to box height, or 147% */
+
+color: #F5F6F8;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* detail */
+
+display: none;
+width: 0px;
+height: 28px;
+
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Preview only — connect backend for a live QR */
+
+width: 266px;
+height: 20px;
+
+/* TracePulse/Caption */
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 400;
+font-size: 13px;
+line-height: 20px;
+/* identical to box height, or 154% */
+
+color: #A5ADB8;
+
+
+/* Inside auto layout */
+flex: none;
+order: 5;
+flex-grow: 0;

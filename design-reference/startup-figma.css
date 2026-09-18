@@ -1,0 +1,559 @@
+/* 01 · Startup */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 32px;
+gap: 16px;
+isolation: isolate;
+
+position: relative;
+width: 1440px;
+height: 900px;
+
+background: #080A0D;
+
+
+/* Background / neon circuit grid */
+
+position: absolute;
+width: 1440px;
+height: 900px;
+left: 0px;
+top: 0px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+z-index: 0;
+
+
+/* Vector */
+
+position: absolute;
+left: 42.36%;
+right: -28.47%;
+top: -40%;
+bottom: 33.33%;
+
+background: radial-gradient(50% 50% at 50% 50%, rgba(255, 117, 31, 0.2) 0%, rgba(255, 117, 31, 0) 100%);
+
+
+/* Vector */
+
+position: absolute;
+left: -38.89%;
+right: 38.89%;
+top: 54.44%;
+bottom: -34.44%;
+
+background: radial-gradient(50% 50% at 50% 50%, rgba(255, 117, 31, 0.2) 0%, rgba(255, 117, 31, 0) 100%);
+
+
+/* Vector */
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 0%;
+bottom: 0%;
+
+background: #000000;
+border: 1px solid rgba(140, 96, 73, 0.09);
+
+
+/* Vector */
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 15.33%;
+bottom: 0%;
+
+border: 1px solid rgba(255, 117, 31, 0.28);
+
+
+/* Vector */
+
+position: absolute;
+left: 1.81%;
+right: 1.81%;
+top: 2.89%;
+bottom: 2.89%;
+
+border: 1px solid rgba(255, 117, 31, 0.55);
+
+
+/* Group */
+
+position: absolute;
+left: 34.51%;
+right: 23.4%;
+top: 27.22%;
+bottom: 25.22%;
+
+opacity: 0.65;
+
+
+/* Vector */
+
+position: absolute;
+left: 34.51%;
+right: 65.07%;
+top: 68.56%;
+bottom: 30.78%;
+
+background: #FF751F;
+
+
+/* Vector */
+
+position: absolute;
+left: 38.68%;
+right: 60.9%;
+top: 71.22%;
+bottom: 28.11%;
+
+background: #FF751F;
+
+
+/* Vector */
+
+position: absolute;
+left: 67.15%;
+right: 32.43%;
+top: 27.22%;
+bottom: 72.11%;
+
+background: #FF751F;
+
+
+/* Vector */
+
+position: absolute;
+left: 76.18%;
+right: 23.4%;
+top: 74.11%;
+bottom: 25.22%;
+
+background: #FF751F;
+
+
+/* Startup / topbar */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: flex-start;
+padding: 0px;
+gap: 12px;
+
+width: 1376px;
+height: 44px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+z-index: 1;
+
+
+/* TRACEPULSE */
+
+width: 192px;
+height: 32px;
+
+/* TracePulse/Brand */
+font-family: 'Orbitron';
+font-style: normal;
+font-weight: 700;
+font-size: 24px;
+line-height: 32px;
+/* identical to box height, or 133% */
+
+color: #FF751F;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* DESKTOP AGENT  /  v1.0.0 */
+
+width: 150px;
+height: 20px;
+
+/* TracePulse/Caption */
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 400;
+font-size: 13px;
+line-height: 20px;
+/* identical to box height, or 154% */
+
+color: #A5ADB8;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Startup / main */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+padding: 0px;
+gap: 23px;
+
+width: 1376px;
+height: 700px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+flex-grow: 0;
+z-index: 2;
+
+
+/* radar-pulse-container */
+
+width: 160px;
+height: 160px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* ring-outer */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 160px;
+height: 160px;
+left: calc(50% - 160px/2);
+top: calc(50% - 160px/2);
+
+opacity: 0.15;
+border: 1px solid #FF751F;
+
+
+/* ring-mid */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 120px;
+height: 120px;
+left: calc(50% - 120px/2);
+top: calc(50% - 120px/2);
+
+opacity: 0.3;
+border: 1.5px solid #FF751F;
+
+
+/* ring-inner */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 80px;
+height: 80px;
+left: calc(50% - 80px/2);
+top: calc(50% - 80px/2);
+
+opacity: 0.6;
+border: 2px solid #FF751F;
+filter: drop-shadow(0px 0px 8px #A855F7);
+
+
+/* logo-shield */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 0px;
+
+position: absolute;
+width: 44px;
+height: 44px;
+left: calc(50% - 44px/2);
+top: calc(50% - 44px/2);
+
+
+
+/* icon-wrapper */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+padding: 0px;
+
+width: 32px;
+height: 32px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* shield-check */
+
+width: 32px;
+height: 32px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Vector */
+
+position: absolute;
+left: 16.67%;
+right: 16.67%;
+top: 8.33%;
+bottom: 8.32%;
+
+border: 2px solid #FFFFFF;
+
+
+/* TRACEPULSE */
+
+width: 436px;
+height: 64px;
+
+font-family: 'Orbitron';
+font-style: normal;
+font-weight: 800;
+font-size: 48px;
+line-height: 64px;
+/* identical to box height, or 133% */
+letter-spacing: 0.12em;
+
+color: #F5F6F8;
+
+border: 1px solid #010101;
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* YOUR DEVICE. OUR PROTECTION */
+
+box-sizing: border-box;
+
+width: 260px;
+height: 21px;
+
+font-family: 'Geist Mono';
+font-style: normal;
+font-weight: 600;
+font-size: 16px;
+line-height: 21px;
+/* identical to box height */
+
+color: #FFFFFF;
+
+border: 1px solid rgba(255, 117, 31, 0.28);
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+
+/* Intelligent proximity. Uncompromising security. */
+
+width: 340px;
+height: 24px;
+
+/* TracePulse/Body */
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 400;
+font-size: 16px;
+line-height: 24px;
+/* identical to box height, or 150% */
+
+color: #F5F6F8;
+
+
+/* Inside auto layout */
+flex: none;
+order: 3;
+flex-grow: 0;
+
+
+/* Startup / progress */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+gap: 12px;
+
+width: 344px;
+height: 72px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 4;
+flex-grow: 0;
+
+
+/* INITIALIZING SECURITY MODULES… */
+
+width: 206px;
+height: 20px;
+
+/* TracePulse/Caption */
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 400;
+font-size: 13px;
+line-height: 20px;
+/* identical to box height, or 154% */
+
+color: #F5F6F8;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Loading track */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: flex-start;
+padding: 0px;
+
+width: 360px;
+height: 6px;
+
+background: #171D24;
+border-radius: 3px;
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Loading / 72% */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: flex-start;
+padding: 0px;
+
+width: 260px;
+height: 6px;
+
+background: #FF751F;
+border-radius: 3px;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* TracePulse / Control
+
+Primary and secondary actions, navigation and two-line status cards. Edit Label and Detail; status reveals Detail.
+
+TracePulse reusable action and status control.
+*/
+
+box-sizing: border-box;
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+padding: 8px 16px;
+gap: 8px;
+
+width: 250px;
+height: 48px;
+
+background: #FF751F;
+border: 1px solid #FF751F;
+/* TracePulse/Orange glow */
+box-shadow: 0px 0px 24px rgba(255, 89, 10, 0.22);
+border-radius: 12px;
+
+/* Inside auto layout */
+flex: none;
+order: 5;
+flex-grow: 0;
+
+
+/* label */
+
+width: 134px;
+height: 22px;
+
+/* TracePulse/Label */
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 600;
+font-size: 15px;
+line-height: 22px;
+/* identical to box height, or 147% */
+
+color: #080A0D;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* detail */
+
+display: none;
+width: 0px;
+height: 28px;
+
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;

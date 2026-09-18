@@ -1,54 +1,121 @@
-import React,{useEffect,useState} from "react";
+import React, {useEffect, useState} from "react";
 import EventLog from "../components/EventLog";
+import StatusCard from "../components/StatusCard";
 
-const value=(item,fallback="—")=>item===undefined||item===null||item===""?fallback:item;
-const age=(epoch)=>epoch?`${Math.max(0,Math.round(Date.now()/1000-epoch))}s ago`:"not observed";
+const value = (item, fallback = "—") => item === undefined || item === null || item === "" ? fallback : item;
 
-function Metric({label,children,accent=""}){return <article className={`monitor-card ${accent}`}><span className="monitor-label">{label}</span><strong>{children}</strong></article>;}
-function DeviceRow({title,device,detail}){return <div className="device-row"><div><b>{title}</b><span>{detail}</span></div><code>MODEL {value(device?.model)}<br/>IP&nbsp; {value(device?.ip)}<br/>MAC {value(device?.mac)}</code></div>;}
+function healthTone(healthy) {
+    return healthy ? "safe" : "alert";
+}
 
-export default function LaptopDashboard({session,socket,onUnpair}){
-    const [status,setStatus]=useState(null);
-    const [events,setEvents]=useState([]);
-    const [error,setError]=useState("");
-    useEffect(()=>{
-        let stopped=false;
-        const refresh=async()=>{
-            try{const response=await fetch(`${session.origin}/api/status`,{cache:"no-store"});if(!response.ok)throw Error("monitor status unavailable");if(!stopped)setStatus(await response.json());}
-            catch(exception){if(!stopped)setError(exception.message);}
-        };
-        refresh();const id=setInterval(refresh,1000);return()=>{stopped=true;clearInterval(id);};
-    },[session.origin]);
-    useEffect(()=>socket?.onSecureMessage(message=>setEvents(current=>[message,...current].slice(0,50))),[socket]);
-    const perimeter=status?.perimeter||{};
-    const network=status?.network||{};
-    const heartbeat=status?.heartbeat||{};
-    return <main className="monitor-shell">
-        <header className="monitor-header">
-            <div><p className="eyebrow">TRACEPULSE // KALI MONITOR</p><h1>Security Operations Console</h1><p className="muted">Laptop observes. Paired phone executes authorized actions.</p></div>
-            <div className="header-actions"><span className="live-dot">● LIVE</span><button onClick={onUnpair}>UNPAIR</button></div>
-        </header>
-        {error&&<p className="error-text">{error}</p>}
-        <section className="monitor-grid">
-            <Metric label="Security state" accent={status?.state==="armed"?"good":"warn"}>{value(status?.state,"STARTING").toUpperCase()}</Metric>
-            <Metric label="Phone heartbeat" accent={heartbeat.expired?"danger":"good"}>{heartbeat.expired?"EXPIRED":"HEALTHY"}</Metric>
-            <Metric label="Perimeter" accent={perimeter.inside?"good":"danger"}>{perimeter.inside?"INSIDE":"OUTSIDE"}</Metric>
-            <Metric label="Audit integrity" accent={status?.audit?.valid?"good":"danger"}>{status?.audit?.valid?"VALID":"INVALID"}</Metric>
-        </section>
-        <section className="monitor-columns">
-            <div className="monitor-main">
-                <section className="monitor-panel perimeter-panel">
-                    <div className="panel-heading"><div><p className="eyebrow">PROXIMITY GUARD</p><h2>8 meter perimeter</h2></div><span className={`state-pill ${perimeter.inside?"pill-good":"pill-danger"}`}>{perimeter.inside?"PHONE IN RANGE":"RANGE BREACH"}</span></div>
-                    <div className="perimeter-meter"><div className="perimeter-ring"><strong>{value(perimeter.distance_meters,"—")}</strong><span>meters</span></div><div className="perimeter-facts"><p><b>Boundary</b><span>{value(perimeter.limit_meters)} m</span></p><p><b>RSSI signal</b><span>{perimeter.rssi_dbm===null?"—":`${value(perimeter.rssi_dbm)} dBm`}</span></p><p><b>Lock delay</b><span>{value(perimeter.lock_delay_seconds)} s continuous</span></p></div></div>
-                </section>
-                <section className="monitor-panel"><div className="panel-heading"><div><p className="eyebrow">ASSET INVENTORY</p><h2>Paired endpoints</h2></div><span className="muted">{status?.session?.device_label||"awaiting device"}</span></div><div className="device-list"><DeviceRow title="Kali laptop" device={network.laptop} detail={`${network.laptop?.hostname||"local host"} · ${network.laptop?.user||"operator"}`}/><DeviceRow title="TracePulse phone" device={network.phone} detail={`${status?.session?.device_label||"paired device"} · last seen ${age(network.phone?.last_seen_epoch)}`}/></div></section>
-                <section className="monitor-panel"><div className="panel-heading"><div><p className="eyebrow">DECISION ENGINE</p><h2>Runtime assessment</h2></div></div><div className="facts-grid"><p><b>Current reason</b><span>{value(status?.decision?.reason,"No decision yet")}</span></p><p><b>Model state</b><span>{value(status?.decision?.model_state)}</span></p><p><b>OS session</b><span>{status?.os_session?.active?"ACTIVE":"UNAVAILABLE"}</span></p><p><b>Session ID</b><span>{value(status?.session?.session_id_prefix)}</span></p></div></section>
+function ProximityRadar({inside, distance}) {
+    return <div className={`proximity-radar ${inside ? "is-safe" : "is-alert"}`} aria-label={`Phone ${inside ? "within" : "outside"} the configured security perimeter`}>
+        <span className="radar-ring radar-ring--outer"/><span className="radar-ring radar-ring--middle"/><span className="radar-ring radar-ring--inner"/>
+        <span className="radar-laptop">⌂</span><span className="radar-phone">●</span><span className="radar-link"/>
+        <strong>{value(distance)}</strong><small>metres</small>
+    </div>;
+}
+
+function RelativeProximity({inside, distance}) {
+    return <section className="dashboard-card relative-proximity-card">
+        <h2>Signal &amp; proximity</h2><p>Relative range estimate · not GPS location</p>
+        <div className={`relative-radar ${inside ? "is-safe" : "is-alert"}`}>
+            <span className="relative-ring relative-ring--outer"/><span className="relative-ring relative-ring--inner"/><span className="relative-laptop">⌂</span><span className="relative-phone">●</span><span className="relative-link"/>
+        </div>
+        <span className="relative-caption">Laptop&nbsp; ● &nbsp;———&nbsp; ●&nbsp; Paired phone · {value(distance)} m</span>
+    </section>;
+}
+
+function ProximityGuard({perimeter}) {
+    const inside = perimeter.inside === true;
+    return <section className="dashboard-card proximity-guard">
+        <div><h2>Proximity Guard</h2><p>Keep your phone within the configured security range.</p></div>
+        <div className="proximity-content">
+            <ProximityRadar inside={inside} distance={perimeter.distance_meters}/>
+            <div className="proximity-metrics">
+                <strong className={inside ? "status-safe" : "status-alert"}>● {inside ? "WITHIN SAFE ZONE" : "RANGE BREACH"}</strong>
+                <p><span>Security boundary</span><b>{value(perimeter.limit_meters)} metres</b></p>
+                <p><span>Current distance</span><b>{value(perimeter.distance_meters)} metres</b></p>
+                <p><span>Signal strength</span><b>{perimeter.rssi_dbm == null ? "—" : `${value(perimeter.rssi_dbm)} dBm`}</b></p>
+                <p><span>Lock delay</span><b>{value(perimeter.lock_delay_seconds)} seconds</b></p>
+                <p><span>Connection</span><b className="connection-value">TLS / WSS</b></p>
             </div>
-            <aside className="monitor-side">
-                <section className="monitor-panel"><p className="eyebrow">TELEMETRY</p><h2>Live link health</h2><div className="telemetry-list"><p><b>Received heartbeats</b><span>{value(heartbeat.received_count,0)}</span></p><p><b>Heartbeat age</b><span>{heartbeat.age_seconds===null?"—":`${Number(heartbeat.age_seconds).toFixed(1)}s`}</span></p><p><b>Transport</b><span>TLS / WSS</span></p><p><b>BLE adapter</b><span>hci0</span></p></div></section>
-                <EventLog events={events}/>
-                <section className="monitor-panel operator-note"><p className="eyebrow">OPERATOR MODEL</p><p><b>Phone = executor</b></p><p className="muted">Unlock authorization, heartbeat, and lock actions originate from the paired phone. This console observes telemetry, perimeter decisions, audit integrity, and endpoint identity.</p></section>
-            </aside>
+        </div>
+    </section>;
+}
+
+function DecisionCard({status}) {
+    const safe = status?.state === "armed" && status?.perimeter?.inside && !status?.heartbeat?.expired;
+    const decision = status?.decision || {};
+    return <section className="dashboard-card decision-card">
+        <h2>AI Decision Engine</h2>
+        <strong className={safe ? "status-safe decision-state" : "status-alert decision-state"}>● {safe ? "SAFE" : value(status?.state, "STARTING").toUpperCase()}</strong>
+        <p>{value(decision.reason, "Awaiting a runtime assessment.")}</p>
+        <span>MODEL STATE / {value(decision.model_state, "MODEL_NOT_READY")}</span>
+    </section>;
+}
+
+function SystemInformation({status}) {
+    const network = status?.network || {};
+    return <section className="dashboard-card system-information-card">
+        <h2>System information</h2>
+        <dl>
+            <div><dt>Device</dt><dd>{value(network.laptop?.hostname, "TracePulse Laptop")}</dd></div>
+            <div><dt>User</dt><dd>{value(network.laptop?.user)}</dd></div>
+            <div><dt>OS session</dt><dd>{status?.os_session?.active ? "Active" : "Unavailable"}</dd></div>
+            <div><dt>Paired phone</dt><dd>{value(status?.session?.device_label, "Awaiting device")}</dd></div>
+        </dl>
+    </section>;
+}
+
+export default function LaptopDashboard({session, socket, onUnpair, onShowMobile}) {
+    const [status, setStatus] = useState(null);
+    const [events, setEvents] = useState([]);
+    const [error, setError] = useState("");
+    useEffect(() => {
+        let stopped = false;
+        const refresh = async () => {
+            try {
+                const response = await fetch(`${session.origin}/api/status`, {cache: "no-store"});
+                if (!response.ok) throw Error("monitor status unavailable");
+                if (!stopped) setStatus(await response.json());
+            } catch (exception) {
+                if (!stopped) setError(exception.message);
+            }
+        };
+        refresh();
+        const id = setInterval(refresh, 1000);
+        return () => { stopped = true; clearInterval(id); };
+    }, [session.origin]);
+    useEffect(() => socket?.onSecureMessage(message => setEvents(current => [message, ...current].slice(0, 50))), [socket]);
+
+    const perimeter = status?.perimeter || {};
+    const heartbeat = status?.heartbeat || {};
+    const auditValid = status?.audit?.valid === true;
+    const sessionActive = status?.session?.active === true;
+    return <main className="security-dashboard">
+        <div className="dashboard-circuit" aria-hidden="true"/>
+        <aside className="dashboard-sidebar">
+            <div className="dashboard-brand"><strong>TRACEPULSE</strong><span>SECURITY WORKSPACE</span></div>
+            <nav className="dashboard-navigation" aria-label="Dashboard sections">
+                <span className="navigation-item navigation-item--active">OVERVIEW</span><span className="navigation-item">PROXIMITY</span><span className="navigation-item">EVENTS</span><span className="navigation-item">DECISIONS</span><span className="navigation-item">SYSTEM</span>
+            </nav>
+            <section className="sidebar-protection"><strong className={sessionActive ? "status-safe" : "status-alert"}>● {sessionActive ? "PROTECTED" : "UNPAIRED"}</strong><span>Authenticated monitor</span><span>{status?.session?.approved ? "Paired session active" : "Awaiting approval"}</span></section>
+        </aside>
+        <section className="dashboard-main">
+            <header className="dashboard-header">
+                <div><h1>Security Operations Console</h1><p>Your workspace, protected. Monitor proximity and trusted device health.</p></div>
+                <div className="dashboard-actions"><span className="live-protection">● LIVE PROTECTION</span>{onShowMobile && <button className="phone-view-button" onClick={onShowMobile}>PHONE EXECUTOR</button>}<button className="unpair-button" onClick={onUnpair}>UNPAIR</button></div>
+            </header>
+            {error && <p className="dashboard-error">{error}</p>}
+            <section className="dashboard-status-row">
+                <StatusCard label="Security state" value={value(status?.state, "STARTING").toUpperCase()} tone={healthTone(status?.state === "armed")}/>
+                <StatusCard label="Phone heartbeat" value={heartbeat.expired ? "EXPIRED" : "HEALTHY"} tone={healthTone(!heartbeat.expired)}/>
+                <StatusCard label="Perimeter" value={perimeter.inside ? "INSIDE" : "OUTSIDE"} tone={healthTone(perimeter.inside)}/>
+                <StatusCard label="Audit integrity" value={auditValid ? "VALID" : "INVALID"} tone={healthTone(auditValid)}/>
+            </section>
+            <section className="dashboard-monitoring-row"><ProximityGuard perimeter={perimeter}/><RelativeProximity inside={perimeter.inside === true} distance={perimeter.distance_meters}/></section>
+            <section className="dashboard-details-row"><EventLog events={events}/><DecisionCard status={status}/><SystemInformation status={status}/></section>
         </section>
     </main>;
 }
