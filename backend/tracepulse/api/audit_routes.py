@@ -6,10 +6,10 @@ from ..storage.database import DatabaseError
 
 bp = Blueprint("audit_api", __name__, url_prefix="/api/audit")
 
-def ext(name):
-    value = current_app.extensions.get(name)
+def services():
+    value = current_app.extensions.get("tracepulse_runtime")
     if value is None:
-        raise RuntimeError(f"missing extension: {name}")
+        raise RuntimeError("missing extension: tracepulse_runtime")
     return value
 
 def error(message, status):
@@ -18,7 +18,7 @@ def error(message, status):
 @bp.get("/verify")
 def verify_audit_chain():
     try:
-        audit = ext("tracepulse_audit")
+        audit = services().audit
         return jsonify({"valid": audit.verify()})
     except Exception:
         return error("audit verification failed", 503)
@@ -26,7 +26,7 @@ def verify_audit_chain():
 @bp.get("/events")
 def list_events():
     try:
-        db = ext("tracepulse_db")
+        db = services().db
         audit = AuditLog(db)
         events = audit.db.fetch_all("SELECT * FROM security_events ORDER BY id DESC LIMIT 50")
         return jsonify({"events": events})
