@@ -28,7 +28,8 @@ def list_events():
     try:
         db = services().db
         audit = AuditLog(db)
-        events = audit.db.fetch_all("SELECT * FROM security_events ORDER BY id DESC LIMIT 50")
+        rows = audit.db.fetch_all("SELECT * FROM security_events ORDER BY id DESC LIMIT 50")
+        events = [dict(row) for row in rows]
         return jsonify({"events": events})
     except DatabaseError:
         return error("audit events unavailable", 503)
