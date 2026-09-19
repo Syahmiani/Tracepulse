@@ -31,6 +31,7 @@ from .api.calibration_routes import bp as calibration_bp
 from .api.heartbeat_routes import bp as heartbeat_bp
 from .api.runtime_routes import bp as runtime_bp
 from .api.scheduler_routes import bp as scheduler_bp
+from .api.audit_routes import bp as audit_bp
 class Services:
     def __init__(self,app,config):
         self.app=app; self.config=config; self.db=Database(DatabaseConfig(config.database_path)); self.db.open(); self.db.initialize(); self.audit=AuditLog(self.db); self.pairing=PairingManager(); self.sessions=SessionManager(); self.heartbeat=HeartbeatMonitor(config.heartbeat_timeout_seconds); self.os=KaliSession(); self.lock_engine=LockEngine(self.os); self.machine=SecurityStateMachine(); self.filter=KalmanFilter1D(); self.last_ble=None; self.last_rssi=None; self.last_rssi_covariance=None; self.last_distance_meters=None; self.phone_ip=None; self.phone_mac=None; self.phone_model=None; self.phone_last_seen=None; self.unlock_nonces={}; self.lock_enforced=False
@@ -163,7 +164,7 @@ def create_app(overrides=None):
             response.headers["Access-Control-Allow-Headers"]="Content-Type"
         return response
     services=Services(app,config); app.extensions.update(tracepulse_config=config,tracepulse_pairing=services.pairing,tracepulse_sessions=services.sessions,tracepulse_db=services.db,tracepulse_heartbeat=services.heartbeat,tracepulse_audit=services.audit,tracepulse_runtime=services,tracepulse_scheduler=services.scheduler)
-    app.register_blueprint(pairing_bp); app.register_blueprint(status_bp); app.register_blueprint(calibration_bp); app.register_blueprint(heartbeat_bp); app.register_blueprint(runtime_bp); app.register_blueprint(scheduler_bp); return app
+    app.register_blueprint(pairing_bp); app.register_blueprint(status_bp); app.register_blueprint(calibration_bp); app.register_blueprint(heartbeat_bp); app.register_blueprint(runtime_bp); app.register_blueprint(scheduler_bp); app.register_blueprint(audit_bp); return app
 
 def create_socketio(app):
     socketio=SocketIO(app,async_mode="threading",cors_allowed_origins=os.getenv("TRACEPULSE_FRONTEND_ORIGIN","*"),logger=False,engineio_logger=False); server=SecureSocketServer(socketio,app.extensions["tracepulse_runtime"]); server.register(); services=app.extensions["tracepulse_runtime"]; services.socket_server=server; socketio.start_background_task(services.watchdog); socketio.start_background_task(services.start_ble); return socketio
