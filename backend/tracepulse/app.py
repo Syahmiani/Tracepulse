@@ -167,7 +167,7 @@ def create_app(overrides=None):
     app.register_blueprint(pairing_bp); app.register_blueprint(status_bp); app.register_blueprint(calibration_bp); app.register_blueprint(heartbeat_bp); app.register_blueprint(runtime_bp); app.register_blueprint(scheduler_bp); app.register_blueprint(audit_bp); return app
 
 def create_socketio(app):
-    socketio=SocketIO(app,async_mode="threading",cors_allowed_origins=os.getenv("TRACEPULSE_FRONTEND_ORIGIN","*"),logger=False,engineio_logger=False); server=SecureSocketServer(socketio,app.extensions["tracepulse_runtime"]); server.register(); services=app.extensions["tracepulse_runtime"]; services.socket_server=server; socketio.start_background_task(services.watchdog); socketio.start_background_task(services.start_ble); return socketio
+    socketio=SocketIO(app,async_mode="threading",cors_allowed_origins=os.getenv("TRACEPULSE_FRONTEND_ORIGIN","*"),logger=False,engineio_logger=False,ping_interval=3,ping_timeout=3); server=SecureSocketServer(socketio,app.extensions["tracepulse_runtime"]); server.register(); services=app.extensions["tracepulse_runtime"]; services.socket_server=server; socketio.start_background_task(services.watchdog); socketio.start_background_task(services.start_ble); return socketio
 
 def main():
     app=create_app(); socketio=create_socketio(app); config=app.config["TRACEPULSE_CONFIG"]; context=server_context(config.tls_cert,config.tls_key); socketio.run(app,host=config.bind_host,port=config.port,ssl_context=context,allow_unsafe_werkzeug=True)
