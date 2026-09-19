@@ -37,6 +37,7 @@ class Services:
         self.app=app; self.config=config; self.db=Database(DatabaseConfig(config.database_path)); self.db.open(); self.db.initialize(); self.audit=AuditLog(self.db); self.pairing=PairingManager(); self.sessions=SessionManager(); self.heartbeat=HeartbeatMonitor(config.heartbeat_timeout_seconds); self.os=KaliSession(); self.lock_engine=LockEngine(self.os); self.machine=SecurityStateMachine(); self.filter=KalmanFilter1D(); self.last_ble=None; self.last_rssi=None; self.last_rssi_covariance=None; self.last_distance_meters=None; self.phone_ip=None; self.phone_mac=None; self.phone_model=None; self.phone_last_seen=None; self.unlock_nonces={}; self.lock_enforced=False
         self.arp_guard=ArpGuard(); self.network_context_collector=NetworkContextCollector(trusted_bssids=config.trusted_bssids); self.perimeter=DynamicPerimeter(base_limit_meters=config.proximity_distance_meters,max_expansion_meters=config.dynamic_perimeter_max_expansion_meters,stability_covariance_threshold=config.dynamic_perimeter_stability_covariance); self.scheduler=ManualScheduler()
         self.last_network_guard=None; self.last_context=None; self._next_network_guard_check=0.0; self.socket_server=None
+        self._connection_lost_lock_armed=True; self._last_heartbeat_count_seen=0
         self.decision=DecisionEngine(state_machine=self.machine,lock_callback=self.lock_now,heartbeat_timeout_seconds=config.heartbeat_timeout_seconds,ble_max_age_seconds=config.ble_max_age_seconds,rssi_threshold_dbm=config.rssi_threshold_dbm,proximity_lock_delay_seconds=config.proximity_lock_delay_seconds)
     def network_snapshot(self):
         try: host_ip=socket.gethostbyname(socket.gethostname())
@@ -129,6 +130,20 @@ class Services:
                     d=self.decision.evaluate(session_active=True,heartbeat_age=self.heartbeat.age_seconds(),ble_age=ble_age,filtered_rssi_dbm=self.last_rssi,proximity_out_of_range=ble_age is None or ble_age>self.config.ble_max_age_seconds or (self.last_distance_meters is not None and self.last_distance_meters>effective_limit),proximity_distance_meters=self.last_distance_meters,os_locked=self.os_status().get("locked_hint") is True,extra_reasons=extra_reasons)
                     if self.lock_enforced and self.os_status().get("locked_hint") is not True and not self.os.screen_locker_active():
                         self.lock_now(reason="lock hold enforcement")
+                    # Wi-Fi/connectivity loss is detected here, off the phone's own
+                    # heartbeat staleness, rather than off Socket.IO's "disconnect"
+                    # event: a ping-timeout disconnect fires from Socket.IO's own
+                    # background monitor thread with no live Flask request in
+                    # progress, so Flask-SocketIO can't resolve a request context for
+                    # it and silently drops the event before any handler sees it.
+                    # The heartbeat, sent every ~400ms over an authenticated message,
+                    # is tracked independently of that transport-level plumbing.
+                    if self.heartbeat.received_count!=self._last_heartbeat_count_seen:
+                        self._last_heartbeat_count_seen=self.heartbeat.received_count; self._connection_lost_lock_armed=True
+                    hb_age=self.heartbeat.age_seconds()
+                    if self._connection_lost_lock_armed and hb_age is not None and hb_age>=self.config.connection_lost_lock_delay_seconds:
+                        self._connection_lost_lock_armed=False
+                        self.lock_now(reason=f"phone connection/Wi-Fi lost (heartbeat stale {hb_age:.1f}s)")
             except Exception:self.app.logger.exception("watchdog failure")
             time.sleep(.1)
     async def ble_loop(self):
