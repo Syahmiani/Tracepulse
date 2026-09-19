@@ -35,6 +35,8 @@ class Config:
     trusted_bssids: tuple[str, ...] = ()
     network_guard_check_interval_seconds: float = 5.0
     ble_simulate: bool = False
+    connection_lost_lock_delay_seconds: float = 8.0
+    phone_refresh_unpair_delay_seconds: float = 4.0
 
     @classmethod
     def from_env(cls, testing: bool = False) -> "Config":
@@ -63,6 +65,8 @@ class Config:
             trusted_bssids=tuple(x.strip() for x in os.getenv("TRACEPULSE_TRUSTED_BSSIDS", "").split(",") if x.strip()),
             network_guard_check_interval_seconds=float(os.getenv("TRACEPULSE_NETWORK_GUARD_INTERVAL_SECONDS", cls.network_guard_check_interval_seconds)),
             ble_simulate=_env_bool("TRACEPULSE_BLE_SIMULATE", cls.ble_simulate),
+            connection_lost_lock_delay_seconds=float(os.getenv("TRACEPULSE_CONNECTION_LOST_LOCK_DELAY_SECONDS", cls.connection_lost_lock_delay_seconds)),
+            phone_refresh_unpair_delay_seconds=float(os.getenv("TRACEPULSE_PHONE_REFRESH_UNPAIR_DELAY_SECONDS", cls.phone_refresh_unpair_delay_seconds)),
         )
 
     def validate_runtime(self) -> None:
@@ -80,3 +84,5 @@ class Config:
             raise ValueError("invalid dynamic perimeter configuration")
         if self.network_guard_check_interval_seconds <= 0:
             raise ValueError("network guard check interval must be positive")
+        if self.connection_lost_lock_delay_seconds <= 0 or self.phone_refresh_unpair_delay_seconds <= 0:
+            raise ValueError("connection lost/unpair grace delays must be positive")

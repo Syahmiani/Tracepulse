@@ -35,7 +35,7 @@ class Services:
     def __init__(self,app,config):
         self.app=app; self.config=config; self.db=Database(DatabaseConfig(config.database_path)); self.db.open(); self.db.initialize(); self.audit=AuditLog(self.db); self.pairing=PairingManager(); self.sessions=SessionManager(); self.heartbeat=HeartbeatMonitor(config.heartbeat_timeout_seconds); self.os=KaliSession(); self.lock_engine=LockEngine(self.os); self.machine=SecurityStateMachine(); self.filter=KalmanFilter1D(); self.last_ble=None; self.last_rssi=None; self.last_rssi_covariance=None; self.last_distance_meters=None; self.phone_ip=None; self.phone_mac=None; self.phone_model=None; self.phone_last_seen=None; self.unlock_nonces={}; self.lock_enforced=False
         self.arp_guard=ArpGuard(); self.network_context_collector=NetworkContextCollector(trusted_bssids=config.trusted_bssids); self.perimeter=DynamicPerimeter(base_limit_meters=config.proximity_distance_meters,max_expansion_meters=config.dynamic_perimeter_max_expansion_meters,stability_covariance_threshold=config.dynamic_perimeter_stability_covariance); self.scheduler=ManualScheduler()
-        self.last_network_guard=None; self.last_context=None; self._next_network_guard_check=0.0
+        self.last_network_guard=None; self.last_context=None; self._next_network_guard_check=0.0; self.socket_server=None
         self.decision=DecisionEngine(state_machine=self.machine,lock_callback=self.lock_now,heartbeat_timeout_seconds=config.heartbeat_timeout_seconds,ble_max_age_seconds=config.ble_max_age_seconds,rssi_threshold_dbm=config.rssi_threshold_dbm,proximity_lock_delay_seconds=config.proximity_lock_delay_seconds)
     def network_snapshot(self):
         try: host_ip=socket.gethostbyname(socket.gethostname())
@@ -114,6 +114,7 @@ class Services:
         while True:
             try:
                 now_monotonic=time.monotonic()
+                if self.socket_server is not None: self.socket_server.process_pending_disconnects(now=now_monotonic)
                 if now_monotonic>=self._next_network_guard_check:
                     self._next_network_guard_check=now_monotonic+self.config.network_guard_check_interval_seconds
                     self.refresh_network_guard(); self.refresh_context()
@@ -145,7 +146,7 @@ class Services:
 def create_app(overrides=None):
     config=Config.from_env(bool((overrides or {}).get("TESTING")))
     if overrides:
-        names={"TRACEPULSE_SERVICE_URL":"service_url","TRACEPULSE_BIND_HOST":"bind_host","TRACEPULSE_PORT":"port","TRACEPULSE_DATABASE_PATH":"database_path","TRACEPULSE_TLS_CERT":"tls_cert","TRACEPULSE_TLS_KEY":"tls_key","TRACEPULSE_BLE_SERVICE_UUID":"ble_service_uuid","TRACEPULSE_BLE_ADAPTER":"ble_adapter","TRACEPULSE_HEARTBEAT_TIMEOUT_SECONDS":"heartbeat_timeout_seconds","TRACEPULSE_BLE_MAX_AGE_SECONDS":"ble_max_age_seconds","TRACEPULSE_RSSI_THRESHOLD_DBM":"rssi_threshold_dbm","TRACEPULSE_PROXIMITY_DISTANCE_METERS":"proximity_distance_meters","TRACEPULSE_PROXIMITY_LOCK_DELAY_SECONDS":"proximity_lock_delay_seconds","TRACEPULSE_PROXIMITY_REFERENCE_RSSI_DBM":"proximity_reference_rssi_dbm","TRACEPULSE_PROXIMITY_PATH_LOSS_EXPONENT":"proximity_path_loss_exponent","TRACEPULSE_LOCAL_ADMIN_ONLY":"local_admin_only","TRACEPULSE_LOCAL_STATUS_ONLY":"local_status_only"}
+        names={"TRACEPULSE_SERVICE_URL":"service_url","TRACEPULSE_BIND_HOST":"bind_host","TRACEPULSE_PORT":"port","TRACEPULSE_DATABASE_PATH":"database_path","TRACEPULSE_TLS_CERT":"tls_cert","TRACEPULSE_TLS_KEY":"tls_key","TRACEPULSE_BLE_SERVICE_UUID":"ble_service_uuid","TRACEPULSE_BLE_ADAPTER":"ble_adapter","TRACEPULSE_HEARTBEAT_TIMEOUT_SECONDS":"heartbeat_timeout_seconds","TRACEPULSE_BLE_MAX_AGE_SECONDS":"ble_max_age_seconds","TRACEPULSE_RSSI_THRESHOLD_DBM":"rssi_threshold_dbm","TRACEPULSE_PROXIMITY_DISTANCE_METERS":"proximity_distance_meters","TRACEPULSE_PROXIMITY_LOCK_DELAY_SECONDS":"proximity_lock_delay_seconds","TRACEPULSE_PROXIMITY_REFERENCE_RSSI_DBM":"proximity_reference_rssi_dbm","TRACEPULSE_PROXIMITY_PATH_LOSS_EXPONENT":"proximity_path_loss_exponent","TRACEPULSE_LOCAL_ADMIN_ONLY":"local_admin_only","TRACEPULSE_LOCAL_STATUS_ONLY":"local_status_only","TRACEPULSE_CONNECTION_LOST_LOCK_DELAY_SECONDS":"connection_lost_lock_delay_seconds","TRACEPULSE_PHONE_REFRESH_UNPAIR_DELAY_SECONDS":"phone_refresh_unpair_delay_seconds"}
         values={names[key]:value for key,value in overrides.items() if key in names}; values["testing"]=bool(overrides.get("TESTING",config.testing)); config=replace(config,**values)
     config.validate_runtime(); app=Flask(__name__); app.config.update(TRACEPULSE_CONFIG=config,TRACEPULSE_SERVICE_URL=config.service_url,TRACEPULSE_LOCAL_ADMIN_ONLY=config.local_admin_only,TRACEPULSE_LOCAL_STATUS_ONLY=config.local_status_only)
     frontend_origin=os.getenv("TRACEPULSE_FRONTEND_ORIGIN","*")
@@ -165,7 +166,7 @@ def create_app(overrides=None):
     app.register_blueprint(pairing_bp); app.register_blueprint(status_bp); app.register_blueprint(calibration_bp); app.register_blueprint(heartbeat_bp); app.register_blueprint(runtime_bp); app.register_blueprint(scheduler_bp); return app
 
 def create_socketio(app):
-    socketio=SocketIO(app,async_mode="threading",cors_allowed_origins=os.getenv("TRACEPULSE_FRONTEND_ORIGIN","*"),logger=False,engineio_logger=False); server=SecureSocketServer(socketio,app.extensions["tracepulse_runtime"]); server.register(); services=app.extensions["tracepulse_runtime"]; socketio.start_background_task(services.watchdog); socketio.start_background_task(services.start_ble); return socketio
+    socketio=SocketIO(app,async_mode="threading",cors_allowed_origins=os.getenv("TRACEPULSE_FRONTEND_ORIGIN","*"),logger=False,engineio_logger=False); server=SecureSocketServer(socketio,app.extensions["tracepulse_runtime"]); server.register(); services=app.extensions["tracepulse_runtime"]; services.socket_server=server; socketio.start_background_task(services.watchdog); socketio.start_background_task(services.start_ble); return socketio
 
 def main():
     app=create_app(); socketio=create_socketio(app); config=app.config["TRACEPULSE_CONFIG"]; context=server_context(config.tls_cert,config.tls_key); socketio.run(app,host=config.bind_host,port=config.port,ssl_context=context,allow_unsafe_werkzeug=True)
